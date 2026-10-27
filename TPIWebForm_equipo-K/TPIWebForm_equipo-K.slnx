@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="dominio/dominio.csproj" />
+  <Project Path="negocio/negocio.csproj" />
+  <Project Path="TPIWebForm_equipo-K/TPIWebForm_equipo-K.csproj" />
+</Solution>
