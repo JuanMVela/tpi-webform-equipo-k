@@ -1,4 +1,5 @@
-﻿using negocio;
+﻿using dominio;
+using negocio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,12 @@ namespace TPIWebForm_equipo_K
 {
     public partial class AdminCategorias : System.Web.UI.Page
     {
+        private List<Categoria> listaCategorias;
         protected void Page_Load(object sender, EventArgs e)
         {
             CategoriaNegocio negocio = new CategoriaNegocio();
-
-            dgvCategorias.DataSource = negocio.listar();
+            listaCategorias = negocio.listar();
+            dgvCategorias.DataSource = listaCategorias;
             dgvCategorias.DataBind();
         }
         protected void BtnAgregar_Click(object sender, EventArgs e)
@@ -45,6 +47,27 @@ namespace TPIWebForm_equipo_K
             {
                 Response.Write("<script>alert('Error al eliminar: " + ex.Message + "');</script>");
             }   
+        }
+
+        protected void txtFiltro_TextChanged(object sender, EventArgs e)
+        {
+            if (listaCategorias == null) return;
+
+            List<Categoria> listaFiltrada;
+            string filtro = txtFiltro.Text;
+
+            if (filtro != "")
+            {
+                listaFiltrada = listaCategorias.FindAll(x => x.Nombre.ToLower().Contains(filtro.ToLower()));
+            }
+            else
+            {
+                listaFiltrada = listaCategorias;
+            }
+
+            dgvCategorias.DataSource = null;
+            dgvCategorias.DataSource = listaFiltrada;
+            dgvCategorias.DataBind();
         }
     }
 }
