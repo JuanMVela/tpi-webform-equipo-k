@@ -75,6 +75,7 @@
     <Content Include="Catalogo.aspx" />
     <Content Include="DetalleProducto.aspx" />
     <Content Include="FormularioCategoria.aspx" />
+    <Content Include="FormularioMarca.aspx" />
     <Content Include="Global.asax" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
@@ -138,6 +139,13 @@
     </Compile>
     <Compile Include="FormularioCategoria.aspx.designer.cs">
       <DependentUpon>FormularioCategoria.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FormularioMarca.aspx.cs">
+      <DependentUpon>FormularioMarca.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FormularioMarca.aspx.designer.cs">
+      <DependentUpon>FormularioMarca.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

@@ -44,6 +44,84 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public void agregar(Marca nueva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "INSERT INTO MARCAS (Nombre, Activo) " +
+                    "VALUES (@Nombre, 1)"
+                );
+
+                datos.setearParametro("@Nombre", nueva.Nombre);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public void modificar(Marca marca)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE MARCAS " +
+                    "SET Nombre = @Nombre " +
+                    "WHERE Id = @Id"
+                );
+
+                datos.setearParametro("@Nombre", marca.Nombre);
+                datos.setearParametro("@Id", marca.Id);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public void actualizarEstado(int id, bool activo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE MARCAS " +
+                    "SET Activo = @Activo " +
+                    "WHERE Id = @Id"
+                );
+
+                datos.setearParametro("@Activo", activo);
+                datos.setearParametro("@Id", id);
+
+                datos.ejecutarAccion();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
     
 }
