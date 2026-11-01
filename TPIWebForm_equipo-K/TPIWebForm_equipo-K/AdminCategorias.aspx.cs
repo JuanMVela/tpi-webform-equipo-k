@@ -11,13 +11,12 @@ namespace TPIWebForm_equipo_K
 {
     public partial class AdminCategorias : System.Web.UI.Page
     {
-        private List<Categoria> listaCategorias;
         protected void Page_Load(object sender, EventArgs e)
         {
-            CategoriaNegocio negocio = new CategoriaNegocio();
-            listaCategorias = negocio.listar();
-            dgvCategorias.DataSource = listaCategorias;
-            dgvCategorias.DataBind();
+            if (!IsPostBack)
+            {
+                cargarGrilla();
+            }
         }
         protected void BtnAgregar_Click(object sender, EventArgs e)
         {
@@ -38,35 +37,40 @@ namespace TPIWebForm_equipo_K
                 int id = Convert.ToInt32(dgvCategorias.DataKeys[e.RowIndex].Value);
 
                 CategoriaNegocio negocio = new CategoriaNegocio();
-                negocio.eliminarLogico(id);
+                negocio.actualizarEstado(id, false);
 
-                dgvCategorias.DataSource = negocio.listar();
-                dgvCategorias.DataBind();
+                cargarGrilla();
             }
             catch (Exception ex)
             {
-                Response.Write("<script>alert('Error al eliminar: " + ex.Message + "');</script>");
-            }   
+                Response.Write(
+                    "<script>alert('Error al desactivar: " + ex.Message + "');</script>"
+                );
+            }
         }
 
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
-            if (listaCategorias == null) return;
+            CategoriaNegocio negocio = new CategoriaNegocio();
+            List<Categoria> lista = negocio.listar();
 
-            List<Categoria> listaFiltrada;
             string filtro = txtFiltro.Text;
 
             if (filtro != "")
             {
-                listaFiltrada = listaCategorias.FindAll(x => x.Nombre.ToLower().Contains(filtro.ToLower()));
-            }
-            else
-            {
-                listaFiltrada = listaCategorias;
+                lista = lista.FindAll(
+                    x => x.Nombre.ToLower().Contains(filtro.ToLower())
+                );
             }
 
-            dgvCategorias.DataSource = null;
-            dgvCategorias.DataSource = listaFiltrada;
+            dgvCategorias.DataSource = lista;
+            dgvCategorias.DataBind();
+        }
+        private void cargarGrilla()
+        {
+            CategoriaNegocio negocio = new CategoriaNegocio();
+
+            dgvCategorias.DataSource = negocio.listar();
             dgvCategorias.DataBind();
         }
     }

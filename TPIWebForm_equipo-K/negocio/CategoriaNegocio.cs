@@ -75,25 +75,7 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        public void eliminarLogico(int id)
-        {
-            AccesoDatos datos = new AccesoDatos();
-            try
-            {
-                // Baja lógica: la marcamos como inactiva en lugar de borrarla
-                datos.setearConsulta("UPDATE CATEGORIAS SET Activo = 0 WHERE Id = @Id");
-                datos.setearParametro("@Id", id);
-                datos.ejecutarAccion();
-            }
-            catch (Exception ex) 
-            { 
-                throw ex;
-            }
-            finally 
-            { 
-                datos.cerrarConexion();
-            }
-        }
+        
         public void actualizarEstado(int id, bool activo)
         {
             AccesoDatos datos = new AccesoDatos();
