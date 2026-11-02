@@ -23,12 +23,33 @@ namespace TPIWebForm_equipo_K
             Session["CategoriaModificar"] = null;
             Response.Redirect("FormularioCategoria.aspx");
         }
-        protected void dgvCategorias_SelectedIndexChanged(object sender, EventArgs e)
+        protected void dgvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            int id = Convert.ToInt32(dgvCategorias.SelectedDataKey.Value);
+            try
+            {
+                int id = int.Parse(e.CommandArgument.ToString());
 
-            // Redirigimos al formulario con el ID en la URL
-            Response.Redirect("FormularioCategoria.aspx?id=" + id);
+                if (e.CommandName == "Modificar")
+                {
+                    Response.Redirect("FormularioCategoria.aspx?id=" + id);
+                }
+                else if (e.CommandName == "CambiarEstado")
+                {
+                    CategoriaNegocio negocio = new CategoriaNegocio();
+                    Categoria categoria = negocio.listar().Find(x => x.Id == id);
+
+                    if (categoria != null)
+                    {
+                        bool nuevoEstado = !categoria.Activo; // Invertimos
+                        negocio.actualizarEstado(id, nuevoEstado);
+                        cargarGrilla(); // Recargamos
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
+            }
         }
         protected void dgvCategorias_RowDeleting(object sender, GridViewDeleteEventArgs e)
         {

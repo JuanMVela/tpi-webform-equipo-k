@@ -75,7 +75,6 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        
         public void actualizarEstado(int id, bool activo)
         {
             AccesoDatos datos = new AccesoDatos();

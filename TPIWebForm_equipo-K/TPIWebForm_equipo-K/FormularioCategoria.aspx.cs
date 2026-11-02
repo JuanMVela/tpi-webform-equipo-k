@@ -16,29 +16,31 @@ namespace TPIWebForm_equipo_K
             if (!IsPostBack)
             {
                 string id = Request.QueryString["id"];
+
                 if (id != null)
                 {
+                    int idCategoria = int.Parse(id);
+
                     // Modo Modificación: Buscamos la categoría y cargamos el TextBox
+
                     CategoriaNegocio negocio = new CategoriaNegocio();
+                    
                     List<Categoria> lista = negocio.listar();
+                    
                     Categoria seleccionada = lista.Find(x => x.Id == int.Parse(id));
 
-                    if (seleccionada.Activo)
+                    if (seleccionada == null)
                     {
-                        btnEstado.Text = "Desactivar";
-                        btnEstado.CssClass = "btn btn-danger"; // Rojo
+                        Response.Redirect("AdminCategorias.aspx");
+                        return;
                     }
-                    else
-                    {
-                        btnEstado.Text = "Reactivar";
-                        btnEstado.CssClass = "btn btn-success"; // Verde
-                    }
+                    tituloFormulario.InnerText = "Modificar Categoria";
 
-                    if (seleccionada != null)
-                    {
-                        txtNombre.Text = seleccionada.Nombre;
-                        Session["CategoriaModificar"] = seleccionada; // Guardamos para usarla en el botón Aceptar
-                    }
+                    // Cargamos el nombre actual de la marca
+                    txtNombre.Text = seleccionada.Nombre;
+
+                    // Guardamos la marca para utilizarla al presionar Aceptar
+                    Session["CategoriaModificar"] = seleccionada;
                 }
             }
         }
@@ -74,22 +76,6 @@ namespace TPIWebForm_equipo_K
             catch (Exception ex)
             {
                 Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
-            }
-        }
-
-        protected void btnEstado_Click(object sender, EventArgs e)
-        {
-            if (Session["CategoriaModificar"] != null)
-            {
-                Categoria cat = (Categoria)Session["CategoriaModificar"];
-                CategoriaNegocio negocio = new CategoriaNegocio();
-
-                // Invertimos el estado y guardamos
-                bool nuevoEstado = !cat.Activo;
-                negocio.actualizarEstado(cat.Id, nuevoEstado);
-
-                Session["CategoriaModificar"] = null;
-                Response.Redirect("AdminCategorias.aspx");
             }
         }
     }
