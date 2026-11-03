@@ -18,7 +18,7 @@ namespace TPIWebForm_equipo_K
                 ProductoNegocio negocio = new ProductoNegocio();
 
                 // 1. Traemos todos los productos
-                List<Producto> listaProductos = negocio.listar();
+                List<Producto> listaProductos = negocio.listarActivo();
 
                 // 2. Por cada producto, traemos sus imágenes y se las asignamos
                 foreach (Producto prod in listaProductos)
