@@ -19,28 +19,23 @@ namespace TPIWebForm_equipo_K
 
                 if (id != null)
                 {
+                    // MODO MODIFICACIÓN
                     int idCategoria = int.Parse(id);
-
-                    // Modo Modificación: Buscamos la categoría y cargamos el TextBox
-
                     CategoriaNegocio negocio = new CategoriaNegocio();
-                    
                     List<Categoria> lista = negocio.listar();
-                    
-                    Categoria seleccionada = lista.Find(x => x.Id == int.Parse(id));
+                    Categoria seleccionada = lista.Find(x => x.Id == idCategoria);
 
-                    if (seleccionada == null)
+                    if (seleccionada != null)
                     {
-                        Response.Redirect("AdminCategorias.aspx");
-                        return;
+                        tituloFormulario.InnerText = "Modificar Categoria";
+                        txtNombre.Text = seleccionada.Nombre;
+                        Session["CategoriaModificar"] = seleccionada;
                     }
-                    tituloFormulario.InnerText = "Modificar Categoria";
-
-                    // Cargamos el nombre actual de la marca
-                    txtNombre.Text = seleccionada.Nombre;
-
-                    // Guardamos la marca para utilizarla al presionar Aceptar
-                    Session["CategoriaModificar"] = seleccionada;
+                }
+                else
+                {
+                    // MODO ALTA NUEVA
+                    tituloFormulario.InnerText = "Agregar Categoria";
                 }
             }
         }

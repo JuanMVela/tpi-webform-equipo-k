@@ -69,7 +69,6 @@ namespace TPIWebForm_equipo_K
                 );
             }
         }
-
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
             CategoriaNegocio negocio = new CategoriaNegocio();
@@ -83,7 +82,7 @@ namespace TPIWebForm_equipo_K
                     x => x.Nombre.ToLower().Contains(filtro.ToLower())
                 );
             }
-
+            dgvCategorias.PageIndex = 0;
             dgvCategorias.DataSource = lista;
             dgvCategorias.DataBind();
         }
@@ -93,6 +92,14 @@ namespace TPIWebForm_equipo_K
 
             dgvCategorias.DataSource = negocio.listar();
             dgvCategorias.DataBind();
+        }
+        protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            // 1. Le decimos al GridView que cambie a la página seleccionada
+            dgvCategorias.PageIndex = e.NewPageIndex;
+
+            // 2. Volvemos a cargar la grilla para que muestre los datos de esa página
+            cargarGrilla();
         }
     }
 }

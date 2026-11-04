@@ -37,7 +37,7 @@ namespace TPIWebForm_equipo_K
                     x => x.Nombre.ToLower().Contains(filtro.ToLower())
                 );
             }
-
+            dgvProductos.PageIndex = 0;
             dgvProductos.DataSource = lista;
             dgvProductos.DataBind();
         }
@@ -76,6 +76,14 @@ namespace TPIWebForm_equipo_K
             {
                 Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
             }
+        }
+        protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            // 1. Le decimos al GridView que cambie a la página seleccionada
+            dgvProductos.PageIndex = e.NewPageIndex;
+
+            // 2. Volvemos a cargar la grilla para que muestre los datos de esa página
+            cargarGrilla();
         }
     }
 }

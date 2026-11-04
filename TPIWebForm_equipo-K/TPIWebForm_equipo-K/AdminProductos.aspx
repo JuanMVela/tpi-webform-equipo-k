@@ -1,6 +1,26 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AdminProductos.aspx.cs" Inherits="TPIWebForm_equipo_K.AdminProductos" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+     <style>
+     /* Estilo para el paginador del GridView */
+     .pagination a, .pagination span {
+         display: inline-block;
+         padding: 6px 12px;
+         margin: 0 2px;
+         border: 1px solid #dee2e6;
+         border-radius: 4px;
+         color: #0d6efd;
+         text-decoration: none;
+         cursor: pointer;
+     }
+     .pagination a:hover { background-color: #e9ecef; }
+     .pagination span {
+         background-color: #0d6efd;
+         color: white;
+         border-color: #0d6efd;
+         font-weight: bold;
+     }
+ </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container mt-4">
@@ -21,7 +41,11 @@
             AutoGenerateColumns="false"
             CssClass="table table-striped"
             DataKeyNames="Id"
-            OnRowCommand="dgvProductos_RowCommand">
+            OnRowCommand="dgvProductos_RowCommand"
+            AllowPaging="true"
+            PageSize="6"
+            OnPageIndexChanging="dgvCategorias_PageIndexChanging"
+            PagerStyle-CssClass="pagination">
             <Columns>
                 <asp:BoundField DataField="Codigo" HeaderText="Código" />
                 <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
