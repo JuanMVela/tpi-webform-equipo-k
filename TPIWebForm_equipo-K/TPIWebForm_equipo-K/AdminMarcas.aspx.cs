@@ -91,9 +91,18 @@ namespace TPIWebForm_equipo_K
                     x => x.Nombre.ToLower().Contains(filtro.ToLower())
                 );
             }
-
+            dgvMarcas.PageIndex = 0;
             dgvMarcas.DataSource = lista;
             dgvMarcas.DataBind();
+        }
+
+        protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            // 1. Le decimos al GridView que cambie a la página seleccionada
+            dgvMarcas.PageIndex = e.NewPageIndex;
+
+            // 2. Volvemos a cargar la grilla para que muestre los datos de esa página
+            cargarGrilla();
         }
     }
 }
