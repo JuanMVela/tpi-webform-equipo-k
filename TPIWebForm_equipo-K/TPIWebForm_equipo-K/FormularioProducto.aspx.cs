@@ -83,18 +83,25 @@ namespace TPIWebForm_equipo_K
                 }
 
                 ProductoNegocio negocio = new ProductoNegocio();
+
                 string codigo = txtCodigo.Text.Trim();
 
-                bool codigoRepetido = false;
-
-                foreach (Producto producto in negocio.listar())
+                // Verificamos que se haya ingresado el código
+                if (codigo == "")
                 {
-                    if (producto.Id != nuevo.Id && producto.Codigo.ToUpper() == codigo.ToUpper())
-                    {
-                        codigoRepetido = true;
-                        break;
-                    }
+                    lblErrorCodigo.Text = "Ingresá el código del producto.";
+                    lblErrorCodigo.Visible = true;
+                    return;
                 }
+
+                lblErrorCodigo.Text = "Ya existe un producto con ese código. Ingresá otro.";
+            
+
+                // Buscamos si otro producto ya usa el código ingresado
+                Producto encontrado = negocio.listar().Find(producto =>
+                    producto.Id != nuevo.Id && producto.Codigo.ToUpper() == codigo.ToUpper());
+
+                bool codigoRepetido = encontrado != null;
 
                 lblErrorCodigo.Visible = codigoRepetido;
 
@@ -102,12 +109,88 @@ namespace TPIWebForm_equipo_K
                 {
                     return;
                 }
+                // Verificamos que el nombre del producto esté cargado
+                string nombre = txtNombre.Text.Trim();
+                lblErrorNombre.Visible = false;
 
+                if (nombre == "")
+                {
+                    lblErrorNombre.Visible = true;
+                    return;
+                }
+
+                // Verificamos que la descripción del producto esté cargada
+                string descripcion = txtDescripcion.Text.Trim();
+                lblErrorDescripcion.Visible = false;
+
+                if (descripcion == "")
+                {
+                    lblErrorDescripcion.Visible = true;
+                    return;
+                }
+                // Validamos que el precio esté cargado
+                lblErrorPrecio.Visible = false;
+
+                if (string.IsNullOrWhiteSpace(txtPrecio.Text))
+                {
+                    lblErrorPrecio.Text = "Ingresá el precio del producto.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
+                // Verificamos que el precio sea un valor numérico
+                decimal precio;
+                try
+                {
+                    precio = decimal.Parse(txtPrecio.Text);
+                }
+                catch (FormatException)
+                {
+                    lblErrorPrecio.Text = "Ingresá un valor numérico.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
+
+                // Verificamos que se haya ingresado el stock
+                lblErrorStock.Visible = false;
+
+                if (string.IsNullOrWhiteSpace(txtStock.Text))
+                {
+                    lblErrorStock.Visible = true;
+                    return;
+                }
+                //Verificamos que el stock sea un número entero
+                int stock;
+                try
+                {
+                    stock = int.Parse(txtStock.Text);
+                }
+                catch (FormatException)
+                {
+                    lblErrorStock.Text = "Ingresá un número entero.";
+                    lblErrorStock.Visible = true;
+                    return;
+                }
+
+                // Verificamos que el stock sea cero o mayor
+                if (stock < 0)
+                {
+                    lblErrorStock.Text = "El stock debe ser cero o mayor.";
+                    lblErrorStock.Visible = true;
+                    return;
+                }
+
+                // Verificamos que el precio sea mayor que cero
+                if (precio <= 0)
+                {
+                    lblErrorPrecio.Text = "El precio debe ser mayor que cero.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
                 // Mapeamos los datos del formulario
                 nuevo.Codigo = codigo;
-                nuevo.Nombre = txtNombre.Text;
+                nuevo.Nombre = nombre;
                 nuevo.Descripcion = txtDescripcion.Text;
-                nuevo.Precio = decimal.Parse(txtPrecio.Text);
+                nuevo.Precio = precio;
                 nuevo.Stock = int.Parse(txtStock.Text);
                 nuevo.Categoria = new Categoria { Id = int.Parse(ddlCategoria.SelectedValue) };
                 nuevo.Marca = new Marca { Id = int.Parse(ddlMarca.SelectedValue) };

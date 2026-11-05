@@ -23,19 +23,31 @@
                                 <div class="mb-3">
                                     <label class="form-label">Nombre:</label>
                                     <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                                    <asp:Label ID="lblErrorNombre" runat="server"
+                                        CssClass="text-danger" Visible="false"
+                                        Text="Ingresá el nombre del producto." />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Descripción:</label>
                                     <asp:TextBox ID="txtDescripcion" runat="server" CssClass="form-control" TextMode="MultiLine" Rows="3"></asp:TextBox>
+                                    <asp:Label ID="lblErrorDescripcion" runat="server"
+                                        CssClass="text-danger" Visible="false"
+                                        Text="Ingresá la descripción del producto." />
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Precio:</label>
                                         <asp:TextBox ID="txtPrecio" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:Label ID="lblErrorPrecio" runat="server"
+                                            CssClass="text-danger" Visible="false"
+                                            Text="Ingresá un precio válido." />
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Stock:</label>
                                         <asp:TextBox ID="txtStock" runat="server" CssClass="form-control"></asp:TextBox>
+                                        <asp:Label ID="lblErrorStock" runat="server"
+                                            CssClass="text-danger" Visible="false"
+                                            Text="Ingresá el stock del producto." />
                                     </div>
                                 </div>
                             </div>
