@@ -12,6 +12,7 @@ namespace TPIWebForm_equipo_K
         {
             if (!IsPostBack)
             {
+                Session["ProductoModificar"] = null;
                 CargarCombos();
 
                 string id = Request.QueryString["id"];
@@ -81,8 +82,29 @@ namespace TPIWebForm_equipo_K
                     nuevo = (Producto)Session["ProductoModificar"];
                 }
 
+                ProductoNegocio negocio = new ProductoNegocio();
+                string codigo = txtCodigo.Text.Trim();
+
+                bool codigoRepetido = false;
+
+                foreach (Producto producto in negocio.listar())
+                {
+                    if (producto.Id != nuevo.Id && producto.Codigo.ToUpper() == codigo.ToUpper())
+                    {
+                        codigoRepetido = true;
+                        break;
+                    }
+                }
+
+                lblErrorCodigo.Visible = codigoRepetido;
+
+                if (codigoRepetido)
+                {
+                    return;
+                }
+
                 // Mapeamos los datos del formulario
-                nuevo.Codigo = txtCodigo.Text;
+                nuevo.Codigo = codigo;
                 nuevo.Nombre = txtNombre.Text;
                 nuevo.Descripcion = txtDescripcion.Text;
                 nuevo.Precio = decimal.Parse(txtPrecio.Text);
@@ -106,7 +128,6 @@ namespace TPIWebForm_equipo_K
                     nuevo.Imagenes.Add(img);
                 }
 
-                ProductoNegocio negocio = new ProductoNegocio();
 
                 // Si es un producto nuevo (Id == 0), lo agregamos
                 if (nuevo.Id == 0)

@@ -65,6 +65,27 @@ namespace TPIWebForm_equipo_K
                 }
 
                 MarcaNegocio negocio = new MarcaNegocio();
+                string nombreIngresado = txtNombre.Text.Trim();
+                int idActual = 0;
+
+                if (Session["MarcaModificar"] != null)
+                {
+                    Marca marcaActual = (Marca)Session["MarcaModificar"];
+                    idActual = marcaActual.Id;
+                }
+
+                // Buscamos si otra marca ya usa ese nombre
+                lblErrorNombre.Visible = false;
+
+                foreach (Marca marcaExistente in negocio.listar())
+                {
+                    if (marcaExistente.Id != idActual &&
+                        marcaExistente.Nombre.Trim().ToUpper() == nombreIngresado.ToUpper())
+                    {
+                        lblErrorNombre.Visible = true;                        
+                        return;
+                    }
+                }
 
                 if (Session["MarcaModificar"] != null)
                 {

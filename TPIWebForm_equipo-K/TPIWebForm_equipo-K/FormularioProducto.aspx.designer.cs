@@ -33,6 +33,15 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.TextBox txtCodigo;
 
         /// <summary>
+        /// Control lblErrorCodigo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErrorCodigo;
+
+        /// <summary>
         /// Control txtNombre.
         /// </summary>
         /// <remarks>

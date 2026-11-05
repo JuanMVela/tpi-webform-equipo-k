@@ -26,7 +26,9 @@
                                 runat="server"
                                 CssClass="form-control">
                             </asp:TextBox>
-
+                            <asp:Label ID="lblErrorNombre" runat="server"
+                                CssClass="text-danger" Visible="false"
+                                Text="Ya existe una marca con ese nombre." />
                         </div>
 
                         <div class="mt-4">
