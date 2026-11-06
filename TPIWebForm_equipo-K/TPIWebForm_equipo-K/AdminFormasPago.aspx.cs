@@ -19,6 +19,7 @@ namespace TPIWebForm_equipo_K
             dgvFormasPago.DataSource = negocio.listar();
             dgvFormasPago.DataBind();
         }
+       
         // Filtra las formas de pago por nombre
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
@@ -35,7 +36,7 @@ namespace TPIWebForm_equipo_K
             dgvFormasPago.DataSource = lista;
             dgvFormasPago.DataBind();
         }
-        // Desactiva la forma de pago seleccionada
+       
         // Gestiona las acciones de la fila seleccionada
         protected void dgvFormasPago_RowCommand(object sender, GridViewCommandEventArgs e)
         {

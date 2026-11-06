@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AdminCategorias.aspx" />
+    <Content Include="AdminFormasEntrega.aspx" />
     <Content Include="AdminFormasPago.aspx" />
     <Content Include="AdminMarcas.aspx" />
     <Content Include="AdminPedidos.aspx" />
@@ -76,6 +77,7 @@
     <Content Include="Catalogo.aspx" />
     <Content Include="DetalleProducto.aspx" />
     <Content Include="FormularioCategoria.aspx" />
+    <Content Include="FormularioFormaEntrega.aspx" />
     <Content Include="FormularioFormaPago.aspx" />
     <Content Include="FormularioMarca.aspx" />
     <Content Include="FormularioProducto.aspx" />
@@ -93,6 +95,13 @@
     </Compile>
     <Compile Include="AdminCategorias.aspx.designer.cs">
       <DependentUpon>AdminCategorias.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="AdminFormasEntrega.aspx.cs">
+      <DependentUpon>AdminFormasEntrega.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AdminFormasEntrega.aspx.designer.cs">
+      <DependentUpon>AdminFormasEntrega.aspx</DependentUpon>
     </Compile>
     <Compile Include="AdminFormasPago.aspx.cs">
       <DependentUpon>AdminFormasPago.aspx</DependentUpon>
@@ -149,6 +158,13 @@
     </Compile>
     <Compile Include="FormularioCategoria.aspx.designer.cs">
       <DependentUpon>FormularioCategoria.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="FormularioFormaEntrega.aspx.cs">
+      <DependentUpon>FormularioFormaEntrega.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="FormularioFormaEntrega.aspx.designer.cs">
+      <DependentUpon>FormularioFormaEntrega.aspx</DependentUpon>
     </Compile>
     <Compile Include="FormularioFormaPago.aspx.cs">
       <DependentUpon>FormularioFormaPago.aspx</DependentUpon>

@@ -35,7 +35,8 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="AdminProductos.aspx">Productos</a></li>
                                 <li><a class="dropdown-item" href="AdminCategorias.aspx">Categorías</a></li>
-                                <li><a class="dropdown-item" href="AdminFormasPago.aspx">Formas de Pago</a></li>                                
+                                <li><a class="dropdown-item" href="AdminFormasPago.aspx">Formas de Pago</a></li>
+                                <li><a class="dropdown-item" href="AdminFormasEntrega.aspx">Formas de Entrega</a></li>
                                 <li><a class="dropdown-item" href="AdminMarcas.aspx">Marcas</a></li>
                                 <li><a class="dropdown-item" href="AdminPedidos.aspx">Pedidos</a></li>
                             </ul>
