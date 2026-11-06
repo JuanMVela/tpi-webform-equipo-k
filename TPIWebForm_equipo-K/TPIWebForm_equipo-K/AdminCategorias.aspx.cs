@@ -23,32 +23,47 @@ namespace TPIWebForm_equipo_K
             Session["CategoriaModificar"] = null;
             Response.Redirect("FormularioCategoria.aspx");
         }
+        // Gestiona las acciones de la categoría seleccionada
         protected void dgvCategorias_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            try
+            bool estadoActualizado = false;
+
+            // Abrimos el formulario si se solicita modificar
+            if (e.CommandName == "Modificar")
             {
                 int id = int.Parse(e.CommandArgument.ToString());
+                Response.Redirect("FormularioCategoria.aspx?id=" + id);
+                return;
+            }
 
-                if (e.CommandName == "Modificar")
+            if (e.CommandName == "CambiarEstado")
+            {
+                try
                 {
-                    Response.Redirect("FormularioCategoria.aspx?id=" + id);
-                }
-                else if (e.CommandName == "CambiarEstado")
-                {
+                    int id = int.Parse(e.CommandArgument.ToString());
                     CategoriaNegocio negocio = new CategoriaNegocio();
-                    Categoria categoria = negocio.listar().Find(x => x.Id == id);
+
+                    // Buscamos la categoría para conocer su estado
+                    Categoria categoria = negocio.listar().Find(item => item.Id == id);
 
                     if (categoria != null)
                     {
-                        bool nuevoEstado = !categoria.Activo; // Invertimos
+                        bool nuevoEstado = !categoria.Activo;
                         negocio.actualizarEstado(id, nuevoEstado);
-                        cargarGrilla(); // Recargamos
+                        estadoActualizado = true;
                     }
                 }
+                catch (Exception)
+                {
+                    Response.Write("<script>alert('Error al cambiar el estado.');</script>");
+                    return;
+                }
             }
-            catch (Exception ex)
+
+            // Evitamos repetir el cambio de estado al recargar
+            if (estadoActualizado)
             {
-                Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
+                Response.Redirect("AdminCategorias.aspx");
             }
         }
         protected void dgvCategorias_RowDeleting(object sender, GridViewDeleteEventArgs e)

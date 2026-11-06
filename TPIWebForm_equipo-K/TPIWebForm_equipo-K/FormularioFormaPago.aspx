@@ -18,19 +18,14 @@
                                 Nombre de la forma de pago
                             </label>
 
-                            <asp:TextBox ID="txtNombre" runat="server"
-                                CssClass="form-control" MaxLength="100">
+                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="100">
                             </asp:TextBox>
 
-                            <asp:Label ID="lblErrorNombre" runat="server"
-                                CssClass="text-danger" Visible="false"></asp:Label>
+                            <asp:Label ID="lblErrorNombre" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
                         </div>
 
-                        <div class="mt-4">                            
-                            <asp:Button ID="Button1" runat="server"
-                                Text="Aceptar" CssClass="btn btn-primary"
-                                OnClick="btnAceptar_Click" />
-
+                        <div class="mt-4">
+                            <asp:Button ID="Button1" runat="server" Text="Aceptar" CssClass="btn btn-primary" OnClick="btnAceptar_Click" />
                             <a href="AdminFormasPago.aspx" class="btn btn-secondary">Cancelar
                             </a>
                         </div>

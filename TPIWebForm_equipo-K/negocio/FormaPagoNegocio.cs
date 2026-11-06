@@ -78,5 +78,22 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        // Activa o desactiva una forma de pago
+        public void actualizarEstado(int id, bool activo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("UPDATE FORMAS_PAGO SET Activo = @Activo WHERE Id = @Id");
+                datos.setearParametro("@Activo", activo);
+                datos.setearParametro("@Id", id);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

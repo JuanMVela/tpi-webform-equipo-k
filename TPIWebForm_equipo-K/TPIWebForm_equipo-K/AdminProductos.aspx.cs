@@ -45,36 +45,47 @@ namespace TPIWebForm_equipo_K
         {
             Response.Redirect("FormularioProducto.aspx");
         }
+        // Gestiona las acciones del producto seleccionado
         protected void dgvProductos_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            try
+            bool estadoActualizado = false;
+
+            // Abrimos el formulario si se solicita modificar
+            if (e.CommandName == "Modificar")
             {
                 int id = int.Parse(e.CommandArgument.ToString());
+                Response.Redirect("FormularioProducto.aspx?id=" + id);
+                return;
+            }
 
-                if (e.CommandName == "Modificar")
+            if (e.CommandName == "CambiarEstado")
+            {
+                try
                 {
-                    Response.Redirect("FormularioProducto.aspx?id=" + id);
-                }
-                else if (e.CommandName == "CambiarEstado")
-                {
+                    int id = int.Parse(e.CommandArgument.ToString());
                     ProductoNegocio negocio = new ProductoNegocio();
-                    // Buscamos el producto para conocer su estado actual
-                    Producto producto = negocio.listar().Find(x => x.Id == id);
+
+                    // Buscamos el producto para conocer su estado
+                    Producto producto = negocio.listar().Find(item => item.Id == id);
 
                     if (producto != null)
                     {
-                        // Invertimos el estado actual
                         bool nuevoEstado = !producto.Activo;
                         negocio.actualizarEstado(id, nuevoEstado);
-
-                        // Actualizamos el listado
-                        cargarGrilla();
+                        estadoActualizado = true;
                     }
                 }
+                catch (Exception ex)
+                {
+                    Response.Write("<script>alert('Error al cambiar el estado.');</script>");
+                    return;
+                }
             }
-            catch (Exception ex)
+
+            // Evitamos repetir el cambio de estado al recargar
+            if (estadoActualizado)
             {
-                Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
+                Response.Redirect("AdminProductos.aspx");
             }
         }
         protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)

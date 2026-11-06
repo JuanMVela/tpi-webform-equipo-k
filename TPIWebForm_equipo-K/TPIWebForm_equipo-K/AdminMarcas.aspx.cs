@@ -37,41 +37,47 @@ namespace TPIWebForm_equipo_K
             Response.Redirect("FormularioMarca.aspx");
         }
 
+        // Gestiona las acciones de la marca seleccionada
         protected void dgvMarcas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            try
+            bool estadoActualizado = false;
+
+            // Abrimos el formulario si se solicita modificar
+            if (e.CommandName == "Modificar")
             {
-                // Obtenemos el ID de la marca seleccionada
                 int id = int.Parse(e.CommandArgument.ToString());
+                Response.Redirect("FormularioMarca.aspx?id=" + id);
+                return;
+            }
 
-                if (e.CommandName == "Modificar")
+            if (e.CommandName == "CambiarEstado")
+            {
+                try
                 {
-                    // Enviamos el ID de la marca al formulario
-                    Response.Redirect("FormularioMarca.aspx?id=" + id);
-                }
-
-                if (e.CommandName == "CambiarEstado")
-                {
+                    int id = int.Parse(e.CommandArgument.ToString());
                     MarcaNegocio negocio = new MarcaNegocio();
 
-                    // Buscamos la marca para conocer su estado actual
-                    Marca marca = negocio.listar().Find(x => x.Id == id);
+                    // Buscamos la marca para conocer su estado
+                    Marca marca = negocio.listar().Find(item => item.Id == id);
 
                     if (marca != null)
                     {
-                        // Invertimos el estado actual
                         bool nuevoEstado = !marca.Activo;
-
                         negocio.actualizarEstado(id, nuevoEstado);
-
-                        // Actualizamos el listado
-                        cargarGrilla();
+                        estadoActualizado = true;
                     }
                 }
+                catch (Exception)
+                {
+                    Response.Write("<script>alert('Error al cambiar el estado.');</script>");
+                    return;
+                }
             }
-            catch (Exception ex)
+
+            // Evitamos repetir el cambio de estado al recargar
+            if (estadoActualizado)
             {
-                Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
+                Response.Redirect("AdminMarcas.aspx");
             }
         }
 
