@@ -39,5 +39,44 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        // Agrega una forma de pago y la deja activa
+        public void agregar(FormaPago nueva)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "INSERT INTO FORMAS_PAGO (Nombre, Activo) " +
+                    "VALUES (@Nombre, 1)"
+                );
+
+                datos.setearParametro("@Nombre", nueva.Nombre);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        // Modifica el nombre de una forma de pago
+        public void modificar(FormaPago formaPago)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE FORMAS_PAGO SET Nombre = @Nombre WHERE Id = @Id");
+
+                datos.setearParametro("@Nombre", formaPago.Nombre);
+                datos.setearParametro("@Id", formaPago.Id);
+                datos.ejecutarAccion();
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

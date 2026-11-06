@@ -10,6 +10,7 @@ namespace TPIWebForm_equipo_K
 {
     public partial class AdminFormasPago : System.Web.UI.Page
     {
+        
         // Carga las formas de pago en la grilla administrativa
         private void cargarGrilla()
         {
