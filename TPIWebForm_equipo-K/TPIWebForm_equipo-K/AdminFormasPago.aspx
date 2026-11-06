@@ -5,16 +5,19 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container mt-4">
         <h2>Administración de Formas de Pago</h2>
-        <div class="d-flex justify-content-end mb-3">
-            <a href="FormularioFormaPago.aspx" class="btn btn-success">+ Nueva Forma de Pago
-            </a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="input-group w-50">
+                <span class="input-group-text">🔍 Buscar</span>
+                <asp:TextBox ID="txtFiltro" runat="server" CssClass="form-control" placeholder="Nombre de la forma de pago..." AutoPostBack="true" OnTextChanged="txtFiltro_TextChanged"></asp:TextBox>
+            </div>
+            <a href="FormularioFormaPago.aspx" class="btn btn-success">+ Nueva Forma de Pago</a>
         </div>
         <asp:GridView ID="dgvFormasPago" runat="server" AutoGenerateColumns="false" CssClass="table table-bordered table-striped" EmptyDataText="No hay formas de pago cargadas." OnRowCommand="dgvFormasPago_RowCommand">
 
             <Columns>
                 <asp:BoundField DataField="Id" HeaderText="ID" />
                 <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
-                <asp:CheckBoxField DataField="Activo" HeaderText="Activo" ReadOnly="true" />                
+                <asp:CheckBoxField DataField="Activo" HeaderText="Activo" ReadOnly="true" />
                 <asp:TemplateField HeaderText="Acciones">
                     <ItemTemplate>
                         <asp:Button ID="btnModificar" runat="server" Text="Modificar" CommandName="Modificar" CommandArgument='<%# Eval("Id") %>' CssClass="btn btn-warning btn-sm" />
