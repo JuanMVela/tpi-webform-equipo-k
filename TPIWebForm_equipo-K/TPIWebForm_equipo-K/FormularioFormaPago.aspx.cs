@@ -49,17 +49,28 @@ namespace TPIWebForm_equipo_K
             string nombre = txtNombre.Text.Trim();
             lblErrorNombre.Visible = false;
 
+            // Verificamos que se haya ingresado el nombre
             if (nombre == "")
             {
                 lblErrorNombre.Text = "Ingresá el nombre de la forma de pago.";
                 lblErrorNombre.Visible = true;
                 return;
             }
-            // Verificamos que no exista otra forma de pago con el mismo nombre
+
+            FormaPago formaPago = new FormaPago();
+
+            // Recuperamos la forma de pago si estamos modificando
+            if (Session["FormaPagoModificar"] != null)
+            {
+                formaPago = (FormaPago)Session["FormaPagoModificar"];
+            }
+
             FormaPagoNegocio negocio = new FormaPagoNegocio();
 
-            FormaPago encontrada = negocio.listar().Find(formaPago =>
-                formaPago.Nombre.Trim().ToUpper() == nombre.ToUpper());
+            // Buscamos si otro registro ya utiliza ese nombre
+            FormaPago encontrada = negocio.listar().Find(item =>
+                item.Id != formaPago.Id &&
+                item.Nombre.Trim().ToUpper() == nombre.ToUpper());
 
             if (encontrada != null)
             {
@@ -67,13 +78,20 @@ namespace TPIWebForm_equipo_K
                 lblErrorNombre.Visible = true;
                 return;
             }
-            // Guardamos la nueva forma de pago
-            FormaPago nueva = new FormaPago();
-            nueva.Nombre = nombre;
 
-            negocio.agregar(nueva);
+            formaPago.Nombre = nombre;
 
-            // Volvemos al listado de formas de pago
+            // Guardamos el alta o la modificación
+            if (formaPago.Id == 0)
+            {
+                negocio.agregar(formaPago);
+            }
+            else
+            {
+                negocio.modificar(formaPago);
+            }
+
+            Session["FormaPagoModificar"] = null;
             Response.Redirect("AdminFormasPago.aspx");
         }
     }
