@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace dominio
 {
-    internal class Direccion
+    public class Direccion
     {
         public int Id { get; set; }
         public int IdUsuario { get; set; }
