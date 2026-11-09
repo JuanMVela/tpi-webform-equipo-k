@@ -84,28 +84,26 @@ namespace TPIWebForm_equipo_K
                 );
             }
         }
+        // Reinicia la paginación cuando cambia la búsqueda
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
+        {
+            dgvCategorias.PageIndex = 0;
+            cargarGrilla();
+        }
+        // Carga las categorías y aplica el filtro por nombre
+        private void cargarGrilla()
         {
             CategoriaNegocio negocio = new CategoriaNegocio();
             List<Categoria> lista = negocio.listar();
 
-            string filtro = txtFiltro.Text;
+            string filtro = txtFiltro.Text.Trim();
 
             if (filtro != "")
             {
-                lista = lista.FindAll(
-                    x => x.Nombre.ToLower().Contains(filtro.ToLower())
-                );
+                lista = lista.FindAll(item => item.Nombre.ToLower().Contains(filtro.ToLower()));
             }
-            dgvCategorias.PageIndex = 0;
-            dgvCategorias.DataSource = lista;
-            dgvCategorias.DataBind();
-        }
-        private void cargarGrilla()
-        {
-            CategoriaNegocio negocio = new CategoriaNegocio();
 
-            dgvCategorias.DataSource = negocio.listar();
+            dgvCategorias.DataSource = lista;
             dgvCategorias.DataBind();
         }
         protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)

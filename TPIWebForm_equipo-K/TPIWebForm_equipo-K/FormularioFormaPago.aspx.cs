@@ -56,7 +56,13 @@ namespace TPIWebForm_equipo_K
                 lblErrorNombre.Visible = true;
                 return;
             }
-
+            // Controlamos la longitud permitida por la base de datos
+            if (nombre.Length > 100)
+            {
+                lblErrorNombre.Text = "El nombre admite hasta 100 caracteres.";
+                lblErrorNombre.Visible = true;
+                return;
+            }
             FormaPago formaPago = new FormaPago();
 
             // Recuperamos la forma de pago si estamos modificando

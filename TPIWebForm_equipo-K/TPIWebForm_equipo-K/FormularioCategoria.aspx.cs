@@ -23,6 +23,8 @@ namespace TPIWebForm_equipo_K
                 {
                     // MODO MODIFICACIÓN
                     int idCategoria = int.Parse(id);
+
+                    
                     CategoriaNegocio negocio = new CategoriaNegocio();
                     List<Categoria> lista = negocio.listar();
                     Categoria seleccionada = lista.Find(x => x.Id == idCategoria);
@@ -59,6 +61,14 @@ namespace TPIWebForm_equipo_K
                 if (nombre == "")
                 {
                     lblErrorNombre.Text = "Ingresá el nombre de la categoría.";
+                    lblErrorNombre.Visible = true;
+                    return;
+                }
+
+                // Controlamos la longitud permitida por la base de datos
+                if (nombre.Length > 100)
+                {
+                    lblErrorNombre.Text = "El nombre admite hasta 100 caracteres.";
                     lblErrorNombre.Visible = true;
                     return;
                 }

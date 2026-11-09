@@ -56,16 +56,26 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
-                // Validamos que el nombre no esté vacío
-                if (string.IsNullOrWhiteSpace(txtNombre.Text))
-                {
-                    Response.Write("<script>alert('Por favor, ingresá un nombre para la marca.');</script>");
+                string nombreIngresado = txtNombre.Text.Trim();
+                lblErrorNombre.Visible = false;
 
-                    return; // Corta la ejecución y no guarda
+                // Verificamos que se haya ingresado el nombre
+                if (nombreIngresado == "")
+                {
+                    lblErrorNombre.Text = "Ingresá el nombre de la marca.";
+                    lblErrorNombre.Visible = true;
+                    return;
+                }
+
+                // Controlamos la longitud permitida por la base de datos
+                if (nombreIngresado.Length > 100)
+                {
+                    lblErrorNombre.Text = "El nombre admite hasta 100 caracteres.";
+                    lblErrorNombre.Visible = true;
+                    return;
                 }
 
                 MarcaNegocio negocio = new MarcaNegocio();
-                string nombreIngresado = txtNombre.Text.Trim();
                 int idActual = 0;
 
                 if (Session["MarcaModificar"] != null)
@@ -80,9 +90,10 @@ namespace TPIWebForm_equipo_K
                 foreach (Marca marcaExistente in negocio.listar())
                 {
                     if (marcaExistente.Id != idActual &&
-                        marcaExistente.Nombre.Trim().ToUpper() == nombreIngresado.ToUpper())
+    marcaExistente.Nombre.Trim().ToUpper() == nombreIngresado.ToUpper())
                     {
-                        lblErrorNombre.Visible = true;                        
+                        lblErrorNombre.Text = "Ya existe una marca con ese nombre.";
+                        lblErrorNombre.Visible = true;
                         return;
                     }
                 }

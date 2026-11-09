@@ -11,10 +11,20 @@ namespace TPIWebForm_equipo_K
 {
     public partial class AdminProductos : System.Web.UI.Page
     {
+        // Carga los productos y aplica el filtro por nombre
         private void cargarGrilla()
         {
             ProductoNegocio negocio = new ProductoNegocio();
-            dgvProductos.DataSource = negocio.listar();
+            List<Producto> lista = negocio.listar();
+
+            string filtro = txtFiltro.Text.Trim();
+
+            if (filtro != "")
+            {
+                lista = lista.FindAll(item => item.Nombre.ToLower().Contains(filtro.ToLower()));
+            }
+
+            dgvProductos.DataSource = lista;
             dgvProductos.DataBind();
         }
         protected void Page_Load(object sender, EventArgs e)
@@ -24,22 +34,11 @@ namespace TPIWebForm_equipo_K
                 cargarGrilla();
             }
         }
+        // Reinicia la paginación cuando cambia la búsqueda
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
-            ProductoNegocio negocio = new ProductoNegocio();
-            List<Producto> lista = negocio.listar();
-
-            string filtro = txtFiltro.Text;
-
-            if (filtro != "")
-            {
-                lista = lista.FindAll(
-                    x => x.Nombre.ToLower().Contains(filtro.ToLower())
-                );
-            }
             dgvProductos.PageIndex = 0;
-            dgvProductos.DataSource = lista;
-            dgvProductos.DataBind();
+            cargarGrilla();
         }
         protected void btnAgregar_Click(object sender, EventArgs e)
         {
@@ -88,12 +87,10 @@ namespace TPIWebForm_equipo_K
                 Response.Redirect("AdminProductos.aspx");
             }
         }
-        protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        // Cambia de página conservando el filtro de búsqueda
+        protected void dgvProductos_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            // 1. Le decimos al GridView que cambie a la página seleccionada
             dgvProductos.PageIndex = e.NewPageIndex;
-
-            // 2. Volvemos a cargar la grilla para que muestre los datos de esa página
             cargarGrilla();
         }
     }

@@ -56,6 +56,14 @@ namespace TPIWebForm_equipo_K
                 return;
             }
 
+            // Controlamos la longitud permitida por la base de datos
+            if (nombre.Length > 100)
+            {
+                lblErrorNombre.Text = "El nombre admite hasta 100 caracteres.";
+                lblErrorNombre.Visible = true;
+                return;
+            }
+
             FormaEntrega formaEntrega = new FormaEntrega();
 
             // Recuperamos el registro si estamos modificando

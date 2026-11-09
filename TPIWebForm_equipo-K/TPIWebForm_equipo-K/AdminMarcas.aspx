@@ -29,7 +29,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container mt-4">
 
-        <h1>Marcas</h1>
+        <h2 class="mb-4">Administración de Marcas</h2>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="input-group w-50">
@@ -42,16 +42,7 @@
                 CssClass="btn btn-success" OnClick="BtnAgregar_Click" />
         </div>
 
-        <asp:GridView
-            ID="dgvMarcas"
-            runat="server"
-            AutoGenerateColumns="false"
-            CssClass="table table-striped"
-            DataKeyNames="Id"
-            OnRowCommand="dgvMarcas_RowCommand"
-            PageSize="6"
-            OnPageIndexChanging="dgvCategorias_PageIndexChanging"
-            PagerStyle-CssClass="pagination">
+        <asp:GridView ID="dgvMarcas" runat="server" AutoGenerateColumns="false" CssClass="table table-striped" DataKeyNames="Id" OnRowCommand="dgvMarcas_RowCommand" AllowPaging="true" PageSize="2" OnPageIndexChanging="dgvMarcas_PageIndexChanging" PagerStyle-CssClass="pagination" EmptyDataText="No se encontraron marcas.">
 
             <Columns>
 

@@ -19,12 +19,20 @@ namespace TPIWebForm_equipo_K
             }
         }
 
+        // Carga las marcas y aplica el filtro por nombre
         private void cargarGrilla()
         {
-            // Cargamos todas las marcas en el GridView
             MarcaNegocio negocio = new MarcaNegocio();
+            List<Marca> lista = negocio.listar();
 
-            dgvMarcas.DataSource = negocio.listar();
+            string filtro = txtFiltro.Text.Trim();
+
+            if (filtro != "")
+            {
+                lista = lista.FindAll(item => item.Nombre.ToLower().Contains(filtro.ToLower()));
+            }
+
+            dgvMarcas.DataSource = lista;
             dgvMarcas.DataBind();
         }
 
@@ -81,33 +89,17 @@ namespace TPIWebForm_equipo_K
             }
         }
 
+        // Reinicia la paginación cuando cambia la búsqueda
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
-            MarcaNegocio negocio = new MarcaNegocio();
-
-            // Obtenemos todas las marcas
-            List<Marca> lista = negocio.listar();
-
-            string filtro = txtFiltro.Text;
-
-            if (filtro != "")
-            {
-                // Filtramos las marcas por nombre
-                lista = lista.FindAll(
-                    x => x.Nombre.ToLower().Contains(filtro.ToLower())
-                );
-            }
             dgvMarcas.PageIndex = 0;
-            dgvMarcas.DataSource = lista;
-            dgvMarcas.DataBind();
+            cargarGrilla();
         }
 
-        protected void dgvCategorias_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        // Cambia de página conservando el filtro
+        protected void dgvMarcas_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            // 1. Le decimos al GridView que cambie a la página seleccionada
             dgvMarcas.PageIndex = e.NewPageIndex;
-
-            // 2. Volvemos a cargar la grilla para que muestre los datos de esa página
             cargarGrilla();
         }
     }

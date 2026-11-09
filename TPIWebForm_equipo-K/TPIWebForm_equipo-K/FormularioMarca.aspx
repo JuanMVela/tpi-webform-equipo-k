@@ -21,11 +21,7 @@
                                 Nombre de la Marca
                            
                             </label>
-                            <asp:TextBox
-                                ID="txtNombre"
-                                runat="server"
-                                CssClass="form-control">
-                            </asp:TextBox>
+                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" ></asp:TextBox>
                             <asp:Label ID="lblErrorNombre" runat="server"
                                 CssClass="text-danger" Visible="false"
                                 Text="Ya existe una marca con ese nombre." />

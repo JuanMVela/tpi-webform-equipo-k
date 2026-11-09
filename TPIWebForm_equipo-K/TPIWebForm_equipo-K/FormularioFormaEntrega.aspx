@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label class="form-label">Nombre de la forma de entrega</label>
-                        <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" MaxLength="100"></asp:TextBox>
+                        <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
                         <asp:Label ID="lblErrorNombre" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
                     </div>
 

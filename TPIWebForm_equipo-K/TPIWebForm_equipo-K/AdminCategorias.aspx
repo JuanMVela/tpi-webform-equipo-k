@@ -28,27 +28,27 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container mt-4">
-        <h1>Categorias</h1>
+        <h2 class="mb-4">Administración de Categorías</h2>
         <div class="d-flex justify-content-between align-items-center mb-3">
-    <!-- Tu buscador -->
-    <div class="input-group w-50">
-        <span class="input-group-text">🔍 Buscar</span>
-        <asp:TextBox ID="txtFiltro" runat="server" CssClass="form-control" 
-                     placeholder="Nombre de la Categoria..." AutoPostBack="true" 
-                     OnTextChanged="txtFiltro_TextChanged"></asp:TextBox>
-    </div>
-    
-    <!-- Tu botón Agregar -->
-    <asp:Button ID="Button1" runat="server" Text="+ Nueva Categoría" 
+            <!-- Tu buscador -->
+            <div class="input-group w-50">
+                <span class="input-group-text">🔍 Buscar</span>
+                <asp:TextBox ID="txtFiltro" runat="server" CssClass="form-control"
+                    placeholder="Nombre de la Categoria..." AutoPostBack="true"
+                    OnTextChanged="txtFiltro_TextChanged"></asp:TextBox>
+            </div>
+
+            <!-- Tu botón Agregar -->
+            <asp:Button ID="Button1" runat="server" Text="+ Nueva Categoría"
                 CssClass="btn btn-success" OnClick="BtnAgregar_Click" />
-</div>
+        </div>
         <asp:GridView ID="dgvCategorias" runat="server" AutoGenerateColumns="false"
             CssClass="table table-striped" DataKeyNames="Id"
             OnRowCommand="dgvCategorias_RowCommand"
             AllowPaging="true"
-            PageSize="6"
+            PageSize="2"
             OnPageIndexChanging="dgvCategorias_PageIndexChanging"
-            PagerStyle-CssClass="pagination">
+            PagerStyle-CssClass="pagination" EmptyDataText="No se encontraron categorías.">
             <Columns>
                 <asp:BoundField DataField="Id" HeaderText="ID" />
                 <asp:BoundField DataField="Nombre" HeaderText="Nombre" />
