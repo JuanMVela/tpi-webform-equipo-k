@@ -15,6 +15,8 @@ namespace TPIWebForm_equipo_K
         {
             if (!IsPostBack)
             {
+                // Limpiamos una posible modificación anterior
+                Session["CategoriaModificar"] = null;
                 string id = Request.QueryString["id"];
 
                 if (id != null)
@@ -24,6 +26,12 @@ namespace TPIWebForm_equipo_K
                     CategoriaNegocio negocio = new CategoriaNegocio();
                     List<Categoria> lista = negocio.listar();
                     Categoria seleccionada = lista.Find(x => x.Id == idCategoria);
+                    // Si la categoría no existe, volvemos al listado
+                    if (seleccionada == null)
+                    {
+                        Response.Redirect("AdminCategorias.aspx");
+                        return;
+                    }
 
                     if (seleccionada != null)
                     {
@@ -44,25 +52,49 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtNombre.Text))
+                string nombre = txtNombre.Text.Trim();
+                lblErrorNombre.Visible = false;
+
+                // Verificamos que se haya ingresado el nombre
+                if (nombre == "")
                 {
-                    Response.Write("<script>alert('Por favor, ingresá un nombre para la categoría.');</script>");
-                    return; // Corta la ejecución aqui y no guarda
+                    lblErrorNombre.Text = "Ingresá el nombre de la categoría.";
+                    lblErrorNombre.Visible = true;
+                    return;
                 }
+
                 CategoriaNegocio negocio = new CategoriaNegocio();
+                int idActual = 0;
+
+                // Obtenemos el ID si estamos modificando
+                if (Session["CategoriaModificar"] != null)
+                {
+                    Categoria categoriaActual = (Categoria)Session["CategoriaModificar"];
+                    idActual = categoriaActual.Id;
+                }
+
+                // Buscamos si otra categoría utiliza el mismo nombre
+                Categoria encontrada = negocio.listar().Find(item => item.Id != idActual && item.Nombre.Trim().ToUpper() == nombre.ToUpper());
+
+                if (encontrada != null)
+                {
+                    lblErrorNombre.Text = "Ya existe una categoría con ese nombre.";
+                    lblErrorNombre.Visible = true;
+                    return;
+                }
 
                 if (Session["CategoriaModificar"] != null)
                 {
                     // Es Modificación
                     Categoria cat = (Categoria)Session["CategoriaModificar"];
-                    cat.Nombre = txtNombre.Text;
+                    cat.Nombre = nombre;
                     negocio.modificar(cat);
                 }
                 else
                 {
                     // Es Alta Nueva
                     Categoria nueva = new Categoria();
-                    nueva.Nombre = txtNombre.Text;
+                    nueva.Nombre = nombre;
                     negocio.agregar(nueva);
                 }
                 Session["CategoriaModificar"] = null;

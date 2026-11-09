@@ -56,10 +56,12 @@
                                 <div class="mb-3">
                                     <label class="form-label">Categoría:</label>
                                     <asp:DropDownList ID="ddlCategoria" runat="server" CssClass="form-select"></asp:DropDownList>
+                                    <asp:Label ID="lblErrorCategoria" runat="server" CssClass="text-danger" Visible="false" Text="Seleccioná una categoría." />
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Marca:</label>
                                     <asp:DropDownList ID="ddlMarca" runat="server" CssClass="form-select"></asp:DropDownList>
+                                    <asp:Label ID="lblErrorMarca" runat="server" CssClass="text-danger" Visible="false" Text="Seleccioná una marca." />
                                 </div>
 
                                 <div class="mb-3">

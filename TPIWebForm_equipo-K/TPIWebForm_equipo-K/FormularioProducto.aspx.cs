@@ -13,7 +13,6 @@ namespace TPIWebForm_equipo_K
             if (!IsPostBack)
             {
                 Session["ProductoModificar"] = null;
-                CargarCombos();
 
                 string id = Request.QueryString["id"];
 
@@ -26,8 +25,18 @@ namespace TPIWebForm_equipo_K
                     ProductoNegocio negocio = new ProductoNegocio();
                     Producto seleccionado = negocio.listar().Find(x => x.Id == idProducto);
 
+                    // Volvemos al listado si el producto no existe
+                    if (seleccionado == null)
+                    {
+                        Response.Redirect("AdminProductos.aspx");
+                        return;
+                    }
+
                     if (seleccionado != null)
                     {
+                        // Conservamos la categoría y marca actuales del producto
+                        CargarCombos(seleccionado.Categoria.Id, seleccionado.Marca.Id);
+
                         // Precargamos los TextBox
                         txtCodigo.Text = seleccionado.Codigo;
                         txtNombre.Text = seleccionado.Nombre;
@@ -53,23 +62,29 @@ namespace TPIWebForm_equipo_K
                 {
                     // MODO ALTA
                     tituloFormulario.InnerText = "Agregar Producto";
+                    CargarCombos();
                 }
             }
         }
-        private void CargarCombos()
+        // Carga las opciones activas y conserva las asignadas al editar
+        private void CargarCombos(int idCategoria = 0, int idMarca = 0)
         {
             CategoriaNegocio negCat = new CategoriaNegocio();
             MarcaNegocio negMar = new MarcaNegocio();
 
-            ddlCategoria.DataSource = negCat.listar();
+            ddlCategoria.DataSource = negCat.listar().FindAll(item => item.Activo || item.Id == idCategoria);
             ddlCategoria.DataTextField = "Nombre";
             ddlCategoria.DataValueField = "Id";
             ddlCategoria.DataBind();
+            // Agregamos una opción inicial sin selección
+            ddlCategoria.Items.Insert(0, new ListItem("Seleccioná una categoría", ""));
 
-            ddlMarca.DataSource = negMar.listar();
+            ddlMarca.DataSource = negMar.listar().FindAll(item => item.Activo || item.Id == idMarca);
             ddlMarca.DataTextField = "Nombre";
             ddlMarca.DataValueField = "Id";
             ddlMarca.DataBind();
+            // Agregamos una opción inicial sin selección
+            ddlMarca.Items.Insert(0, new ListItem("Seleccioná una marca", ""));
         }
         protected void btnAceptar_Click(object sender, EventArgs e)
         {
@@ -95,7 +110,7 @@ namespace TPIWebForm_equipo_K
                 }
 
                 lblErrorCodigo.Text = "Ya existe un producto con ese código. Ingresá otro.";
-            
+
 
                 // Buscamos si otro producto ya usa el código ingresado
                 Producto encontrado = negocio.listar().Find(producto =>
@@ -115,6 +130,7 @@ namespace TPIWebForm_equipo_K
 
                 if (nombre == "")
                 {
+                    lblErrorNombre.Text = "Ingresá el nombre del producto.";
                     lblErrorNombre.Visible = true;
                     return;
                 }
@@ -125,6 +141,7 @@ namespace TPIWebForm_equipo_K
 
                 if (descripcion == "")
                 {
+                    lblErrorDescripcion.Text = "Ingresá la descripción del producto.";
                     lblErrorDescripcion.Visible = true;
                     return;
                 }
@@ -149,6 +166,12 @@ namespace TPIWebForm_equipo_K
                     lblErrorPrecio.Visible = true;
                     return;
                 }
+                catch (OverflowException)
+                {
+                    lblErrorPrecio.Text = "El precio ingresado es demasiado grande.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
 
                 // Verificamos que se haya ingresado el stock
                 lblErrorStock.Visible = false;
@@ -170,6 +193,12 @@ namespace TPIWebForm_equipo_K
                     lblErrorStock.Visible = true;
                     return;
                 }
+                catch (OverflowException)
+                {
+                    lblErrorStock.Text = "El stock ingresado es demasiado grande.";
+                    lblErrorStock.Visible = true;
+                    return;
+                }
 
                 // Verificamos que el stock sea cero o mayor
                 if (stock < 0)
@@ -186,12 +215,68 @@ namespace TPIWebForm_equipo_K
                     lblErrorPrecio.Visible = true;
                     return;
                 }
+
+                // Verificamos que haya una categoría seleccionada
+                lblErrorCategoria.Visible = false;
+
+                if (ddlCategoria.SelectedValue == "")
+                {
+                    lblErrorCategoria.Visible = true;
+                    return;
+                }
+
+                // Verificamos que haya una marca seleccionada
+                lblErrorMarca.Visible = false;
+
+                if (ddlMarca.SelectedValue == "")
+                {
+                    lblErrorMarca.Visible = true;
+                    return;
+                }
+
+                // Controlamos las longitudes permitidas por la base de datos
+                if (codigo.Length > 50)
+                {
+                    lblErrorCodigo.Text = "El código admite hasta 50 caracteres.";
+                    lblErrorCodigo.Visible = true;
+                    return;
+                }
+
+                if (nombre.Length > 150)
+                {
+                    lblErrorNombre.Text = "El nombre admite hasta 150 caracteres.";
+                    lblErrorNombre.Visible = true;
+                    return;
+                }
+
+                if (descripcion.Length > 500)
+                {
+                    lblErrorDescripcion.Text = "La descripción admite hasta 500 caracteres.";
+                    lblErrorDescripcion.Visible = true;
+                    return;
+                }
+
+                // Controlamos el máximo permitido por DECIMAL(18,2)
+                if (precio > 9999999999999999.99m)
+                {
+                    lblErrorPrecio.Text = "El precio supera el máximo permitido.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
+
+                // Evitamos que la base de datos redondee el precio
+                if (decimal.Round(precio, 2) != precio)
+                {
+                    lblErrorPrecio.Text = "El precio admite hasta 2 decimales.";
+                    lblErrorPrecio.Visible = true;
+                    return;
+                }
                 // Mapeamos los datos del formulario
                 nuevo.Codigo = codigo;
                 nuevo.Nombre = nombre;
-                nuevo.Descripcion = txtDescripcion.Text;
+                nuevo.Descripcion = descripcion;
                 nuevo.Precio = precio;
-                nuevo.Stock = int.Parse(txtStock.Text);
+                nuevo.Stock = stock;
                 nuevo.Categoria = new Categoria { Id = int.Parse(ddlCategoria.SelectedValue) };
                 nuevo.Marca = new Marca { Id = int.Parse(ddlMarca.SelectedValue) };
 
