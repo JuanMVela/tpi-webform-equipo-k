@@ -42,12 +42,13 @@ namespace TPIWebForm_equipo_K
                 }
             }
         }
-        // Verifica que se haya ingresado el nombre
+        // Valida y guarda el alta o la modificación de una forma de entrega
         protected void btnAceptar_Click(object sender, EventArgs e)
         {
             string nombre = txtNombre.Text.Trim();
             lblErrorNombre.Visible = false;
 
+            // Verificamos que se haya ingresado el nombre
             if (nombre == "")
             {
                 lblErrorNombre.Text = "Ingresá el nombre de la forma de entrega.";
@@ -55,10 +56,20 @@ namespace TPIWebForm_equipo_K
                 return;
             }
 
-            // Verificamos que no exista otra forma de entrega con el mismo nombre
+            FormaEntrega formaEntrega = new FormaEntrega();
+
+            // Recuperamos el registro si estamos modificando
+            if (Session["FormaEntregaModificar"] != null)
+            {
+                formaEntrega = (FormaEntrega)Session["FormaEntregaModificar"];
+            }
+
             FormaEntregaNegocio negocio = new FormaEntregaNegocio();
 
-            FormaEntrega encontrada = negocio.listar().Find(item => item.Nombre.Trim().ToUpper() == nombre.ToUpper());
+            // Verificamos que otro registro no utilice el mismo nombre
+            FormaEntrega encontrada = negocio.listar().Find(item =>
+                item.Id != formaEntrega.Id &&
+                item.Nombre.Trim().ToUpper() == nombre.ToUpper());
 
             if (encontrada != null)
             {
@@ -66,14 +77,22 @@ namespace TPIWebForm_equipo_K
                 lblErrorNombre.Visible = true;
                 return;
             }
-            // Guardamos la nueva forma de entrega
-            FormaEntrega nueva = new FormaEntrega();
-            nueva.Nombre = nombre;
-            nueva.RequiereDireccion = chkRequiereDireccion.Checked;
 
-            negocio.agregar(nueva);
+            // Asignamos los datos del formulario
+            formaEntrega.Nombre = nombre;
+            formaEntrega.RequiereDireccion = chkRequiereDireccion.Checked;
 
-            // Volvemos al listado
+            // Guardamos el alta o la modificación
+            if (formaEntrega.Id == 0)
+            {
+                negocio.agregar(formaEntrega);
+            }
+            else
+            {
+                negocio.modificar(formaEntrega);
+            }
+
+            Session["FormaEntregaModificar"] = null;
             Response.Redirect("AdminFormasEntrega.aspx");
         }
     }
