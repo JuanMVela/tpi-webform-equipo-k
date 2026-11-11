@@ -77,5 +77,30 @@ namespace negocio
 
             conexion.Close();
         }
+
+        public void setearProcedimiento(string nombreSP)
+        {
+            comando.CommandType = System.Data.CommandType.StoredProcedure;
+            comando.CommandText = nombreSP;
+        }
+
+        public int ejecutarEscalar()
+        {
+            comando.Connection = conexion;
+            try
+            {
+                conexion.Open();
+                // ExecuteScalar devuelve la primera columna de la primera fila (el OUTPUT de nuestro SP)
+                return int.Parse(comando.ExecuteScalar().ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
     }
 }
