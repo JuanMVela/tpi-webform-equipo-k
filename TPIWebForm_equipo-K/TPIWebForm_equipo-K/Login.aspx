@@ -10,17 +10,25 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="emailLogin" class="form-label">Email</label>
-                        <input id="emailLogin" name="emailLogin" type="email" class="form-control" maxlength="150" autocomplete="username" placeholder="Ingresá tu email" />
+                        <label for="txtEmail" class="form-label">Email</label>
+                        <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control" TextMode="Email" placeholder="Ingresá tu email" MaxLength="150"></asp:TextBox>
                     </div>
 
                     <div class="mb-3">
-                        <label for="passwordLogin" class="form-label">Contraseña</label>
-                        <input id="passwordLogin" name="passwordLogin" type="password" class="form-control" autocomplete="current-password" placeholder="Ingresá tu contraseña" />
+                        <label for="txtPassword" class="form-label">Contraseña</label>
+                        <asp:TextBox ID="txtPassword" runat="server" CssClass="form-control" TextMode="Password" placeholder="Ingresá tu contraseña"></asp:TextBox>
                     </div>
 
-                    <button type="button" class="btn btn-primary">Ingresar</button>
+                    <asp:Button ID="btnIngresar" runat="server" Text="Ingresar" CssClass="btn btn-primary" OnClick="btnIngresar_Click" />
                     <a href="Inicio.aspx" class="btn btn-secondary">Cancelar</a>
+
+                    <hr class="my-3" />
+                    <!-- Una línea divisoria linda -->
+
+                    <div class="text-center">
+                        <span class="text-muted">¿No tenés una cuenta?</span>
+                        <a href="Registro.aspx" class="fw-bold text-decoration-none">Registrate acá</a>
+                    </div>
                 </div>
             </div>
         </div>

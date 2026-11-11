@@ -82,6 +82,7 @@
     <Content Include="FormularioMarca.aspx" />
     <Content Include="FormularioProducto.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="img\Ofertas tecnológicas de vanguardia.png" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
     <Content Include="MisCompras.aspx" />
