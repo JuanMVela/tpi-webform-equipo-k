@@ -15,36 +15,25 @@ namespace negocio
             try
             {
                 // 1. Insertamos el usuario
-                datos.setearConsulta("INSERT INTO USUARIOS (Nombre, Apellido, Email, ClaveHash, Telefono, IdPerfil, Activo) " +
-                                     "VALUES (@Nombre, @Apellido, @Email, @Clave, @Telefono, @IdPerfil, 1)");
-
+                datos.setearProcedimiento("UsuariosAgregar");
                 datos.setearParametro("@Nombre", nuevo.Nombre);
                 datos.setearParametro("@Apellido", nuevo.Apellido);
                 datos.setearParametro("@Email", nuevo.Email);
-                datos.setearParametro("@Clave", nuevo.PasswordHash); // Ojo: acá después se encripta
+                datos.setearParametro("@ClaveHash", nuevo.PasswordHash);
                 datos.setearParametro("@Telefono", nuevo.Telefono);
                 datos.setearParametro("@IdPerfil", nuevo.Perfil.Id); // Generalmente 1 o 2 (Cliente)
 
-                datos.ejecutarAccion();
-                datos.cerrarConexion();
-
-                // 2. Obtenemos el ID del usuario recién insertado
-                datos = new AccesoDatos();
-                datos.setearConsulta("SELECT MAX(Id) AS UltimoId FROM USUARIOS");
-                datos.ejecutarLectura();
-
-                int idUsuario = 0;
-                if (datos.Lector.Read())
-                {
-                    idUsuario = (int)datos.Lector["UltimoId"];
-                }
-                datos.cerrarConexion();
+                int idUsuario = datos.ejecutarEscalar();
 
                 return idUsuario;
             }
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
             }
         }
         public Usuario login(string email, string password)

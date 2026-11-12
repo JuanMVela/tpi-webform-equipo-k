@@ -48,7 +48,14 @@ namespace TPIWebForm_equipo_K
 
                 if (idUsuario > 0)
                 {
-                    Response.Write("<script>alert('¡Registro exitoso! Ya podés iniciar sesión.'); window.location='Login.aspx';</script>");
+                    EmailService emailService = new EmailService();
+                    string asunto = "¡Bienvenido a Mi eCommerce!";
+                    string cuerpo = "<h1>¡Hola " + nuevo.Nombre + "!</h1>" +
+                                    "<p>Gracias por registrarte en nuestra tienda. Tu cuenta fue creada con éxito.</p>";
+
+                    emailService.armarCorreo(nuevo.Email, asunto, cuerpo);
+                    emailService.enviarEmail();
+                    Response.Redirect("Login.aspx");
                 }
                 else
                 {
