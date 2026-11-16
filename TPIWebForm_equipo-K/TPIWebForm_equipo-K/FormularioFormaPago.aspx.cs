@@ -46,16 +46,16 @@ namespace TPIWebForm_equipo_K
         // Verifica que se haya ingresado el nombre de la forma de pago
         protected void btnAceptar_Click(object sender, EventArgs e)
         {
-            string nombre = txtNombre.Text.Trim();
             lblErrorNombre.Visible = false;
 
-            // Verificamos que se haya ingresado el nombre
-            if (nombre == "")
+            // Si el nombre obligatorio está vacío, salimos antes de guardar.
+            if (!Page.IsValid)
             {
-                lblErrorNombre.Text = "Ingresá el nombre de la forma de pago.";
-                lblErrorNombre.Visible = true;
                 return;
             }
+
+            string nombre = txtNombre.Text.Trim();
+
             // Controlamos la longitud permitida por la base de datos
             if (nombre.Length > 100)
             {

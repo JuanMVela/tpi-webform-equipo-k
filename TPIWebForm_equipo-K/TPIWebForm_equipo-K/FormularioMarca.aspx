@@ -21,7 +21,14 @@
                                 Nombre de la Marca
                            
                             </label>
-                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control" ></asp:TextBox>
+                            <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="rfvNombre" runat="server"
+                                ControlToValidate="txtNombre"
+                                ErrorMessage="Ingresá el nombre de la marca."
+                                CssClass="text-danger"
+                                Display="Dynamic"
+                                ValidationGroup="Marca"
+                                EnableClientScript="false" />
                             <asp:Label ID="lblErrorNombre" runat="server"
                                 CssClass="text-danger" Visible="false"
                                 Text="Ya existe una marca con ese nombre." />
@@ -34,14 +41,14 @@
                                 runat="server"
                                 Text="Aceptar"
                                 CssClass="btn btn-primary"
-                                OnClick="btnAceptar_Click" />
+                                OnClick="btnAceptar_Click" ValidationGroup="Marca" />
 
                             <asp:Button
                                 ID="btnCancelar"
                                 runat="server"
                                 Text="Cancelar"
                                 CssClass="btn btn-secondary"
-                                OnClick="btnCancelar_Click" />
+                                OnClick="btnCancelar_Click" ValidationGroup="Marca" />
 
                         </div>
                     </div>

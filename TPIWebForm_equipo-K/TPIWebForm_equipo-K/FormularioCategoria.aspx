@@ -15,11 +15,18 @@
                         <div class="mb-3">
                             <label for="txtNombre" class="form-label">Nombre de la Categoría:</label>
                             <asp:TextBox ID="txtNombre" runat="server" CssClass="form-control"></asp:TextBox>
+                            <asp:RequiredFieldValidator ID="rfvNombre" runat="server"
+                                ControlToValidate="txtNombre"
+                                ErrorMessage="Ingresá el nombre de la categoría."
+                                CssClass="text-danger"
+                                Display="Dynamic"
+                                ValidationGroup="Categoria"
+                                EnableClientScript="false" />
                             <asp:Label ID="lblErrorNombre" runat="server" CssClass="text-danger" Visible="false"></asp:Label>
                         </div>
 
                         <div class="mt-4">
-                            <asp:Button ID="btnAceptar" runat="server" Text="Aceptar" CssClass="btn btn-primary" OnClick="btnAceptar_Click" />
+                            <asp:Button ID="btnAceptar" runat="server" Text="Aceptar" CssClass="btn btn-primary" OnClick="btnAceptar_Click" ValidationGroup="Categoria"/>
                             <a href="AdminCategorias.aspx" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </div>

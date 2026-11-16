@@ -54,16 +54,15 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
-                string nombre = txtNombre.Text.Trim();
                 lblErrorNombre.Visible = false;
 
-                // Verificamos que se haya ingresado el nombre
-                if (nombre == "")
+                // Si falla la validación, salimos antes de guardar.
+                if (!Page.IsValid)
                 {
-                    lblErrorNombre.Text = "Ingresá el nombre de la categoría.";
-                    lblErrorNombre.Visible = true;
                     return;
                 }
+
+                string nombre = txtNombre.Text.Trim();
 
                 // Controlamos la longitud permitida por la base de datos
                 if (nombre.Length > 100)

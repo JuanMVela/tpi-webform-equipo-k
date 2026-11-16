@@ -24,10 +24,9 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
-                // 1. Validamos que no estén vacíos
-                if (string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
+                // Si falta el email o la contraseña, salimos antes de iniciar sesión.
+                if (!Page.IsValid)
                 {
-                    Response.Write("<script>alert('Por favor, completá todos los campos.');</script>");
                     return;
                 }
 

@@ -45,16 +45,15 @@ namespace TPIWebForm_equipo_K
         // Valida y guarda el alta o la modificación de una forma de entrega
         protected void btnAceptar_Click(object sender, EventArgs e)
         {
-            string nombre = txtNombre.Text.Trim();
             lblErrorNombre.Visible = false;
 
-            // Verificamos que se haya ingresado el nombre
-            if (nombre == "")
+            // Si la página no pasó la validación, salimos antes de guardar.
+            if (!Page.IsValid)
             {
-                lblErrorNombre.Text = "Ingresá el nombre de la forma de entrega.";
-                lblErrorNombre.Visible = true;
                 return;
             }
+
+            string nombre = txtNombre.Text.Trim();
 
             // Controlamos la longitud permitida por la base de datos
             if (nombre.Length > 100)

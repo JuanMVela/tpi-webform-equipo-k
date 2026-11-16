@@ -33,6 +33,15 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.TextBox txtNombre;
 
         /// <summary>
+        /// Control rfvNombre.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNombre;
+
+        /// <summary>
         /// Control lblErrorNombre.
         /// </summary>
         /// <remarks>
@@ -42,12 +51,12 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.Label lblErrorNombre;
 
         /// <summary>
-        /// Control Button1.
+        /// Control btnAceptar.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.Button btnAceptar;
     }
 }

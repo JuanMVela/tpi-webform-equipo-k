@@ -90,6 +90,20 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
+                // Ocultamos los mensajes del intento anterior.
+                lblErrorCodigo.Visible = false;
+                lblErrorNombre.Visible = false;
+                lblErrorDescripcion.Visible = false;
+                lblErrorPrecio.Visible = false;
+                lblErrorStock.Visible = false;
+                lblErrorCategoria.Visible = false;
+                lblErrorMarca.Visible = false;
+
+                // Si falta algún dato obligatorio, salimos antes de guardar.
+                if (!Page.IsValid)
+                {
+                    return;
+                }
                 Producto nuevo = new Producto();
                 // Si venimos de modificar, traemos el objeto de la sesión
                 if (Session["ProductoModificar"] != null)
@@ -100,14 +114,7 @@ namespace TPIWebForm_equipo_K
                 ProductoNegocio negocio = new ProductoNegocio();
 
                 string codigo = txtCodigo.Text.Trim();
-
-                // Verificamos que se haya ingresado el código
-                if (codigo == "")
-                {
-                    lblErrorCodigo.Text = "Ingresá el código del producto.";
-                    lblErrorCodigo.Visible = true;
-                    return;
-                }
+                               
 
                 lblErrorCodigo.Text = "Ya existe un producto con ese código. Ingresá otro.";
 
@@ -128,32 +135,12 @@ namespace TPIWebForm_equipo_K
                 string nombre = txtNombre.Text.Trim();
                 lblErrorNombre.Visible = false;
 
-                if (nombre == "")
-                {
-                    lblErrorNombre.Text = "Ingresá el nombre del producto.";
-                    lblErrorNombre.Visible = true;
-                    return;
-                }
-
+                
                 // Verificamos que la descripción del producto esté cargada
                 string descripcion = txtDescripcion.Text.Trim();
-                lblErrorDescripcion.Visible = false;
+                lblErrorDescripcion.Visible = false;                           
+               
 
-                if (descripcion == "")
-                {
-                    lblErrorDescripcion.Text = "Ingresá la descripción del producto.";
-                    lblErrorDescripcion.Visible = true;
-                    return;
-                }
-                // Validamos que el precio esté cargado
-                lblErrorPrecio.Visible = false;
-
-                if (string.IsNullOrWhiteSpace(txtPrecio.Text))
-                {
-                    lblErrorPrecio.Text = "Ingresá el precio del producto.";
-                    lblErrorPrecio.Visible = true;
-                    return;
-                }
                 // Verificamos que el precio sea un valor numérico
                 decimal precio;
                 try
@@ -173,14 +160,7 @@ namespace TPIWebForm_equipo_K
                     return;
                 }
 
-                // Verificamos que se haya ingresado el stock
-                lblErrorStock.Visible = false;
-
-                if (string.IsNullOrWhiteSpace(txtStock.Text))
-                {
-                    lblErrorStock.Visible = true;
-                    return;
-                }
+                                
                 //Verificamos que el stock sea un número entero
                 int stock;
                 try
@@ -213,24 +193,6 @@ namespace TPIWebForm_equipo_K
                 {
                     lblErrorPrecio.Text = "El precio debe ser mayor que cero.";
                     lblErrorPrecio.Visible = true;
-                    return;
-                }
-
-                // Verificamos que haya una categoría seleccionada
-                lblErrorCategoria.Visible = false;
-
-                if (ddlCategoria.SelectedValue == "")
-                {
-                    lblErrorCategoria.Visible = true;
-                    return;
-                }
-
-                // Verificamos que haya una marca seleccionada
-                lblErrorMarca.Visible = false;
-
-                if (ddlMarca.SelectedValue == "")
-                {
-                    lblErrorMarca.Visible = true;
                     return;
                 }
 

@@ -23,10 +23,9 @@ namespace TPIWebForm_equipo_K
         {
             try
             {
-                // 1. Validaciones basicas
-                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPassword.Text))
+                // Si falta un campo obligatorio, salimos antes de crear la cuenta.
+                if (!Page.IsValid)
                 {
-                    Response.Write("<script>alert('Por favor, completá los campos obligatorios (Nombre, Email y Contraseña).');</script>");
                     return;
                 }
 
