@@ -1,0 +1,74 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="FinalizarCompra.aspx.cs" Inherits="TPIWebForm_equipo_K.FinalizarCompra" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <div class="container py-4">
+        <h1 class="mb-4">Finalizar compra</h1>
+
+        <div class="row g-3 align-items-start">
+            <div class="col-12 col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Entrega y pago</h2>
+
+                        <div class="mb-3">
+                            <asp:Label runat="server" AssociatedControlID="ddlEntrega"
+                                Text="Forma de entrega" CssClass="form-label" />
+                            <asp:DropDownList ID="ddlEntrega" runat="server"
+                                CssClass="form-select" AutoPostBack="true"
+                                OnSelectedIndexChanged="ddlEntrega_SelectedIndexChanged" />
+                        </div>
+
+                        <asp:Panel ID="pnlDireccion" runat="server"
+                            CssClass="mb-3" Visible="false">
+                            <h3 class="h6">Dirección de envío</h3>
+                            <p class="text-muted mb-0">
+                                Esta forma de entrega requiere una dirección.
+                       
+                            </p>
+                        </asp:Panel>
+
+                        <div class="mb-3">
+                            <asp:Label runat="server" AssociatedControlID="ddlPago"
+                                Text="Forma de pago" CssClass="form-label" />
+                            <asp:DropDownList ID="ddlPago" runat="server"
+                                CssClass="form-select" />
+                        </div>
+
+                        <a href="Carrito.aspx" class="btn btn-outline-secondary">Volver al carrito
+                    </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Resumen de compra</h2>
+
+                        <asp:Repeater ID="repResumen" runat="server">
+                            <ItemTemplate>
+                                <div class="border-bottom pb-2 mb-2">
+                                    <div class="fw-semibold"><%#: Eval("Nombre") %></div>
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <span><%#: Eval("Cantidad") %> × <%#: Eval("Precio", "{0:C}") %></span>
+                                        <span><%#: Eval("Subtotal", "{0:C}") %></span>
+                                    </div>
+                                </div>
+                            </ItemTemplate>
+                        </asp:Repeater>
+
+                        <asp:Label ID="lblAvisoResumen" runat="server"
+                            CssClass="d-block text-danger mb-2" Visible="false" />
+
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Subtotal de productos</span>
+                            <asp:Label ID="lblSubtotalCompra" runat="server" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</asp:Content>

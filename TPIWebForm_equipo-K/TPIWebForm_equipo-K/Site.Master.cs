@@ -34,5 +34,24 @@ namespace TPIWebForm_equipo_K
             Session.Abandon();
             Response.Redirect("Inicio.aspx");
         }
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            // Leemos el carrito guardado en la sesión.
+            var carrito = Session["Carrito"] as Dictionary<int, int>;
+            int totalUnidades = 0;
+
+            if (carrito != null)
+            {
+                foreach (int cantidad in carrito.Values)
+                {
+                    totalUnidades += cantidad;
+                }
+            }
+
+            lblCantidadCarrito.Text = totalUnidades.ToString();
+            lblCantidadCarrito.Visible = totalUnidades > 0;
+        }
     }
 }

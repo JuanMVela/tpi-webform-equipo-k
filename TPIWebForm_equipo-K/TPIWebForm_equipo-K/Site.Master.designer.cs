@@ -42,6 +42,15 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.PlaceHolder phInvitado;
 
         /// <summary>
+        /// Control lblCantidadCarrito.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblCantidadCarrito;
+
+        /// <summary>
         /// Control phLogueado.
         /// </summary>
         /// <remarks>

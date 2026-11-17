@@ -91,7 +91,10 @@
                         <div class="d-flex justify-content-between border-top pt-3 fw-bold">
                             <span>Total</span>
                             <asp:Label ID="lblTotal" runat="server" />
+
                         </div>
+                        <a href="FinalizarCompra.aspx" class="btn btn-success w-100 mt-3">Continuar compra
+</a>
                     </div>
                 </asp:Panel>
             </div>

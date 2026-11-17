@@ -24,10 +24,31 @@
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="Inicio.aspx">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" href="Catalogo.aspx">Catálogo</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Carrito.aspx">Carrito</a></li>
+
                         <li class="nav-item"><a class="nav-link" href="MisCompras.aspx">Mis compras</a></li>
                         <asp:PlaceHolder ID="phInvitado" runat="server">
                             <li class="nav-item"><a class="nav-link" href="Login.aspx">Ingresar</a></li>
+                            <li class="nav-item me-2">
+                                <a class="nav-link" href="Carrito.aspx">
+                                    <span class="visually-hidden">Carrito</span>
+
+                                    <span class="position-relative d-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true" focusable="false">
+                                            <path d="M2 3h3l2.5 12h12l2-8H6" />
+                                            <circle cx="9" cy="20" r="1" />
+                                            <circle cx="18" cy="20" r="1" />
+                                        </svg>
+
+                                        <asp:Label ID="lblCantidadCarrito" runat="server"
+                                            CssClass="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            Visible="false" />
+                                    </span>
+                                </a>
+                            </li>
                             <li class="nav-item"><a class="nav-link" href="Registro.aspx">Registro</a></li>
                         </asp:PlaceHolder>
 
