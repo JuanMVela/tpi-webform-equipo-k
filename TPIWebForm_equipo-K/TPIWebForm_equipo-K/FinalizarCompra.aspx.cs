@@ -21,6 +21,13 @@ namespace TPIWebForm_equipo_K
                 return;
             }
 
+            // Pedimos iniciar sesión para continuar con la compra.
+            if (Session["UsuarioLogueado"] == null)
+            {
+                Response.Redirect("Login.aspx?origen=compra");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 // Cargamos las formas de entrega activas.

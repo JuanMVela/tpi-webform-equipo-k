@@ -13,10 +13,22 @@ namespace TPIWebForm_equipo_K
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Si el usuario ya está logueado, lo mandamos al inicio para que no vea el login de nuevo
+            // Conservamos el destino al pasar al registro.
+            if (Request.QueryString["origen"] == "compra")
+            {
+                lnkRegistro.NavigateUrl = "~/Registro.aspx?origen=compra";
+            }
+            // Si ya ingresó, lo enviamos al destino correspondiente.
             if (!IsPostBack && Session["UsuarioLogueado"] != null)
             {
+                if (Request.QueryString["origen"] == "compra")
+                {
+                    Response.Redirect("FinalizarCompra.aspx");
+                    return;
+                }
+
                 Response.Redirect("Inicio.aspx");
+                return;
             }
         }
 
@@ -37,6 +49,12 @@ namespace TPIWebForm_equipo_K
                 {
                     // si sale bien Guardamos al usuario en la Sesión
                     Session["UsuarioLogueado"] = usuarioLogueado;
+                    // Retomamos la compra después de ingresar.
+                    if (Request.QueryString["origen"] == "compra")
+                    {
+                        Response.Redirect("FinalizarCompra.aspx");
+                        return;
+                    }
 
                     if (usuarioLogueado.Perfil.Id == 2)
                     {

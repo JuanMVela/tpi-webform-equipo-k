@@ -43,9 +43,11 @@
                     <hr class="my-3" />
                     <!-- Una línea divisoria linda -->
 
-                    <div class="text-center">
-                        <span class="text-muted">¿No tenés una cuenta?</span>
-                        <a href="Registro.aspx" class="fw-bold text-decoration-none">Registrate acá</a>
+                    <div class="mt-3">
+                        ¿Todavía no tenés cuenta?   
+                        <asp:HyperLink ID="lnkRegistro" runat="server"
+                            NavigateUrl="~/Registro.aspx"
+                            Text="Registrate" />
                     </div>
                 </div>
             </div>

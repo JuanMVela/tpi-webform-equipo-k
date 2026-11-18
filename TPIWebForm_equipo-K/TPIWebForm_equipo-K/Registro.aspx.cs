@@ -13,10 +13,17 @@ namespace TPIWebForm_equipo_K
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            // Si ya estoy logeado me voy al catalogo directo
+            // Si ya ingresó, lo enviamos al destino correspondiente.
             if (!IsPostBack && Session["UsuarioLogueado"] != null)
             {
+                if (Request.QueryString["origen"] == "compra")
+                {
+                    Response.Redirect("FinalizarCompra.aspx");
+                    return;
+                }
+
                 Response.Redirect("Catalogo.aspx");
+                return;
             }
         }
         protected void btnRegistrar_Click(object sender, EventArgs e)
@@ -54,7 +61,16 @@ namespace TPIWebForm_equipo_K
 
                     emailService.armarCorreo(nuevo.Email, asunto, cuerpo);
                     emailService.enviarEmail();
+
+                    // Conservamos el destino después de crear la cuenta.
+                    if (Request.QueryString["origen"] == "compra")
+                    {
+                        Response.Redirect("Login.aspx?origen=compra");
+                        return;
+                    }
+
                     Response.Redirect("Login.aspx");
+                    return;
                 }
                 else
                 {
