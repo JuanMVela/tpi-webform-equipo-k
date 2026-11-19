@@ -25,7 +25,69 @@
                         <li class="nav-item"><a class="nav-link" href="Inicio.aspx">Inicio</a></li>
                         <li class="nav-item"><a class="nav-link" href="Catalogo.aspx">Catálogo</a></li>
 
-                        <li class="nav-item"><a class="nav-link" href="MisCompras.aspx">Mis compras</a></li>
+                        <asp:PlaceHolder ID="phInvitado" runat="server">
+                            <li class="nav-item">
+                                <a class="nav-link" href="Registro.aspx">Registrate</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="Login.aspx">Iniciá sesión</a>
+                            </li>
+                        </asp:PlaceHolder>
+
+                        <asp:PlaceHolder ID="phLogueado" runat="server" Visible="false">
+                            <li class="nav-item dropdown">
+                                <button type="button"
+                                    class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                                    id="menuUsuario" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        width="22" height="22" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        aria-hidden="true">
+                                        <circle cx="12" cy="8" r="4" />
+                                        <path d="M5 21v-2a7 7 0 0 1 14 0v2" />
+                                    </svg>
+
+                                    <asp:Label ID="lblNombreUsuario" runat="server" />
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end shadow"
+                                    aria-labelledby="menuUsuario">
+                                    <li class="px-3 py-2">
+                                        <div class="fw-semibold">Mi cuenta</div>
+                                        <asp:Label ID="lblEmailUsuario" runat="server"
+                                            CssClass="small text-muted text-break" />
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item" href="MiPerfil.aspx">Datos personales
+                </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="MisCompras.aspx">Mis compras
+                </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+
+                                    <li>
+                                        <asp:Button ID="btnSalir" runat="server"
+                                            Text="Cerrar sesión"
+                                            CssClass="dropdown-item text-danger"
+                                            CausesValidation="false"
+                                            OnClick="btnSalir_Click" />
+                                    </li>
+                                </ul>
+                            </li>
+                        </asp:PlaceHolder>
                         <li class="nav-item me-2">
                             <a class="nav-link" href="Carrito.aspx">
                                 <span class="visually-hidden">Carrito</span>
@@ -47,21 +109,6 @@
                                 </span>
                             </a>
                         </li>
-                        <asp:PlaceHolder ID="phInvitado" runat="server">
-                            <li class="nav-item"><a class="nav-link" href="Login.aspx">Ingresar</a></li>
-
-                            <li class="nav-item"><a class="nav-link" href="Registro.aspx">Registro</a></li>
-                        </asp:PlaceHolder>
-
-                        <asp:PlaceHolder ID="phLogueado" runat="server" Visible="false">
-                            <li class="nav-item">
-                                <span class="nav-link text-warning fw-bold">Hola,
-                                    <asp:Label ID="lblNombreUsuario" runat="server"></asp:Label></span>
-                            </li>
-                            <li class="nav-item">
-                                <asp:Button ID="btnSalir" runat="server" Text="Salir" CssClass="btn btn-outline-danger btn-sm mt-2" OnClick="btnSalir_Click" />
-                            </li>
-                        </asp:PlaceHolder>
                         <!-- Menú desplegable de Administración -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Administración

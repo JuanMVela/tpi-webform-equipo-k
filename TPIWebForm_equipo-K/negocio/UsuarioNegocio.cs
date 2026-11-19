@@ -77,5 +77,67 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        // Recuperamos los datos actuales de un usuario.
+        public Usuario obtenerPorId(int id)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT Id, Nombre, Apellido, Email, Telefono " +
+                    "FROM USUARIOS WHERE Id = @Id AND Activo = 1");
+
+                datos.setearParametro("@Id", id);
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Usuario usuario = new Usuario();
+                    usuario.Id = (int)datos.Lector["Id"];
+                    usuario.Nombre = datos.Lector["Nombre"].ToString();
+                    usuario.Apellido = datos.Lector["Apellido"].ToString();
+                    usuario.Email = datos.Lector["Email"].ToString();
+                    usuario.Telefono = datos.Lector["Telefono"].ToString();
+
+                    return usuario;
+                }
+
+                return null;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Actualizamos los datos personales del usuario.
+        public void actualizarDatosPersonales(Usuario usuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE USUARIOS " +
+                    "SET Nombre = @Nombre, Apellido = @Apellido, " +
+                    "Email = @Email, Telefono = @Telefono " +
+                    "OUTPUT INSERTED.Id " +
+                    "WHERE Id = @Id AND Activo = 1");
+
+                datos.setearParametro("@Nombre", usuario.Nombre);
+                datos.setearParametro("@Apellido", usuario.Apellido);
+                datos.setearParametro("@Email", usuario.Email);
+                datos.setearParametro("@Telefono", usuario.Telefono);
+                datos.setearParametro("@Id", usuario.Id);
+
+                datos.ejecutarEscalar();
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

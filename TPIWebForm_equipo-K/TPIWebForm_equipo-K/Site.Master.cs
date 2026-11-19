@@ -18,7 +18,9 @@ namespace TPIWebForm_equipo_K
                 Usuario usuario = (Usuario)Session["UsuarioLogueado"];
                 phInvitado.Visible = false;
                 phLogueado.Visible = true;
-                lblNombreUsuario.Text = usuario.Nombre;
+                // Mostramos los datos del usuario en el menú.
+                lblNombreUsuario.Text = Server.HtmlEncode(usuario.Nombre);
+                lblEmailUsuario.Text = Server.HtmlEncode(usuario.Email);
             }
             else
             {

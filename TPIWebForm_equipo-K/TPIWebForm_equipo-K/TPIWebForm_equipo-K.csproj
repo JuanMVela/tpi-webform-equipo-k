@@ -86,6 +86,7 @@
     <Content Include="img\Ofertas tecnológicas de vanguardia.png" />
     <Content Include="Inicio.aspx" />
     <Content Include="Login.aspx" />
+    <Content Include="MiPerfil.aspx" />
     <Content Include="MisCompras.aspx" />
     <Content Include="Registro.aspx" />
     <Content Include="Web.config" />
@@ -212,6 +213,13 @@
     </Compile>
     <Compile Include="Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="MiPerfil.aspx.cs">
+      <DependentUpon>MiPerfil.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MiPerfil.aspx.designer.cs">
+      <DependentUpon>MiPerfil.aspx</DependentUpon>
     </Compile>
     <Compile Include="MisCompras.aspx.cs">
       <DependentUpon>MisCompras.aspx</DependentUpon>
