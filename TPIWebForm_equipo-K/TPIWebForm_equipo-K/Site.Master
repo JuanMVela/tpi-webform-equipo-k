@@ -70,6 +70,10 @@
                 </a>
                                     </li>
                                     <li>
+                                        <a class="dropdown-item" href="MisDirecciones.aspx">Mis direcciones
+    </a>
+                                    </li>
+                                    <li>
                                         <a class="dropdown-item" href="MisCompras.aspx">Mis compras
                 </a>
                                     </li>

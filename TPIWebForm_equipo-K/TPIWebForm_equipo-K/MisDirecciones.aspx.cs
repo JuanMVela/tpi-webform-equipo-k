@@ -1,0 +1,104 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using dominio;
+using negocio;
+
+namespace TPIWebForm_equipo_K
+{
+    public partial class MisDirecciones : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            if (!IsPostBack)
+            {
+                CargarDirecciones(usuario.Id);
+            }
+        }
+
+        // Cargamos las tarjetas del usuario.
+        private void CargarDirecciones(int idUsuario)
+        {
+            try
+            {
+                DireccionNegocio negocio = new DireccionNegocio();
+                var direcciones = negocio.listarPorUsuario(idUsuario);
+
+                repDirecciones.DataSource = direcciones;
+                repDirecciones.DataBind();
+
+                lblSinDirecciones.Visible = direcciones.Count == 0;
+            }
+            catch (Exception)
+            {
+                lblAviso.Text = "No pudimos cargar tus direcciones.";
+                lblAviso.Visible = true;
+            }
+        }
+
+        protected void btnNuevaDireccion_Click(object sender, EventArgs e)
+        {
+            lblAviso.Visible = false;
+            pnlFormulario.Visible = true;
+            btnNuevaDireccion.Visible = false;
+        }
+
+        protected void btnGuardarDireccion_Click(object sender, EventArgs e)
+        {
+            lblAviso.Visible = false;
+
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            try
+            {
+                // Asociamos la dirección con el usuario de la sesión.
+                Direccion direccion = new Direccion();
+                direccion.IdUsuario = usuario.Id;
+                direccion.Calle = txtCalle.Text.Trim();
+                direccion.Numero = txtNumero.Text.Trim();
+                direccion.Localidad = txtLocalidad.Text.Trim();
+                direccion.CodigoPostal = txtCodigoPostal.Text.Trim();
+                direccion.Observaciones = txtObservaciones.Text.Trim();
+
+                DireccionNegocio negocio = new DireccionNegocio();
+                negocio.agregar(direccion);
+            }
+            catch (ArgumentException ex)
+            {
+                lblAviso.Text = ex.Message;
+                lblAviso.Visible = true;
+                return;
+            }
+            catch (Exception)
+            {
+                lblAviso.Text = "No pudimos guardar la dirección. Intentá nuevamente.";
+                lblAviso.Visible = true;
+                return;
+            }
+
+            Response.Redirect("MisDirecciones.aspx");
+        }
+    }
+}
