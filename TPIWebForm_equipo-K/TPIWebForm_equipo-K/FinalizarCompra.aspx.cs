@@ -1,4 +1,5 @@
 ﻿using negocio;
+using dominio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,8 +47,15 @@ namespace TPIWebForm_equipo_K
                 ddlPago.DataBind();
                 ddlPago.Items.Insert(0, new ListItem("Seleccioná una forma de pago", ""));
 
-                ddlPago.DataBind();
-                ddlPago.Items.Insert(0, new ListItem("Seleccioná una forma de pago", ""));
+                // Recuperamos las direcciones del usuario que ingresó.
+                Usuario usuario = (Usuario)Session["UsuarioLogueado"];
+                CargarDirecciones(usuario.Id);
+
+                // Recuperamos las opciones después de administrar direcciones.
+                if (Request.QueryString["origen"] == "direcciones")
+                {
+                    RestaurarOpcionesCompra(usuario.Id);
+                }
 
                 CargarResumen(carrito);
             }
@@ -73,6 +81,45 @@ namespace TPIWebForm_equipo_K
             }
         }
 
+        // Cargamos los domicilios disponibles del usuario.
+        // Cargamos las direcciones del usuario para elegir una.
+        private void CargarDirecciones(int idUsuario)
+        {
+            rblDirecciones.Items.Clear();
+            lblSinDirecciones.Visible = false;
+
+            try
+            {
+                DireccionNegocio negocio = new DireccionNegocio();
+                var direcciones = negocio.listarPorUsuario(idUsuario);
+
+                foreach (Direccion direccion in direcciones)
+                {
+                    string descripcion = direccion.Calle + " " + direccion.Numero
+                        + " — " + direccion.Localidad
+                        + " · CP " + direccion.CodigoPostal;
+
+                    // Codificamos el texto antes de mostrarlo.
+                    rblDirecciones.Items.Add(new ListItem(
+                        Server.HtmlEncode(descripcion),
+                        direccion.Id.ToString()
+                    ));
+                }
+
+                if (direcciones.Count == 0)
+                {
+                    lblSinDirecciones.Text =
+                        "Todavía no tenés direcciones guardadas.";
+                    lblSinDirecciones.Visible = true;
+                }
+            }
+            catch (Exception)
+            {
+                lblSinDirecciones.Text =
+                    "No pudimos cargar tus direcciones. Volvé a intentar.";
+                lblSinDirecciones.Visible = true;
+            }
+        }
         private void CargarResumen(Dictionary<int, int> carrito)
         {
             ProductoNegocio negocio = new ProductoNegocio();
@@ -110,6 +157,69 @@ namespace TPIWebForm_equipo_K
                 lblAvisoResumen.Text = "Hay productos que ya no están disponibles. Revisá el carrito.";
                 lblAvisoResumen.Visible = true;
             }
+        }
+
+        // Guardamos las opciones antes de agregar una dirección.
+        protected void btnAgregarDireccion_Click(object sender, EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx?origen=compra");
+                return;
+            }
+
+            var opciones = new Dictionary<string, string>
+    {
+        { "Entrega", ddlEntrega.SelectedValue },
+        { "Pago", ddlPago.SelectedValue },
+        { "Direccion", rblDirecciones.SelectedValue }
+    };
+
+            // La clave identifica al usuario dueño de estas opciones.
+            Session["OpcionesCompra_" + usuario.Id] = opciones;
+
+            Response.Redirect("MisDirecciones.aspx?origen=compra");
+        }
+
+        // Recuperamos las opciones al volver a la compra.
+        private void RestaurarOpcionesCompra(int idUsuario)
+        {
+            string clave = "OpcionesCompra_" + idUsuario;
+
+            var opciones = Session[clave] as Dictionary<string, string>;
+
+            if (opciones == null)
+            {
+                return;
+            }
+
+            // Restauramos solo opciones que siguen disponibles.
+            ListItem entrega = ddlEntrega.Items.FindByValue(opciones["Entrega"]);
+            if (entrega != null)
+            {
+                ddlEntrega.SelectedValue = entrega.Value;
+            }
+
+            ListItem pago = ddlPago.Items.FindByValue(opciones["Pago"]);
+            if (pago != null)
+            {
+                ddlPago.SelectedValue = pago.Value;
+            }
+
+            ListItem direccion =
+                rblDirecciones.Items.FindByValue(opciones["Direccion"]);
+
+            if (direccion != null)
+            {
+                rblDirecciones.SelectedValue = direccion.Value;
+            }
+
+            // Mostramos las direcciones si la entrega lo requiere.
+            ddlEntrega_SelectedIndexChanged(this, EventArgs.Empty);
+
+            Session.Remove(clave);
         }
     }
 }

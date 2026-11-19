@@ -108,8 +108,10 @@
                         ValidationGroup="Direccion"
                         OnClick="btnGuardarDireccion_Click" />
 
-                    <a href="MisDirecciones.aspx"
-                        class="btn btn-outline-secondary">Cancelar</a>
+                    <asp:HyperLink ID="lnkCancelar" runat="server"
+                        NavigateUrl="~/MisDirecciones.aspx"
+                        CssClass="btn btn-outline-secondary"
+                        Text="Cancelar" />
                 </div>
             </div>
         </asp:Panel>

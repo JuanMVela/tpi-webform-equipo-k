@@ -1,6 +1,35 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="FinalizarCompra.aspx.cs" Inherits="TPIWebForm_equipo_K.FinalizarCompra" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+
+    <style>
+        .lista-direcciones {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .lista-direcciones li {
+                display: flex;
+                align-items: baseline;
+                gap: 12px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+            }
+
+            .lista-direcciones label {
+                flex: 1;
+                cursor: pointer;
+                overflow-wrap: anywhere;
+            }
+
+            .lista-direcciones input {
+                cursor: pointer;
+            }
+    </style>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container py-4">
@@ -20,15 +49,6 @@
                                 OnSelectedIndexChanged="ddlEntrega_SelectedIndexChanged" />
                         </div>
 
-                        <asp:Panel ID="pnlDireccion" runat="server"
-                            CssClass="mb-3" Visible="false">
-                            <h3 class="h6">Dirección de envío</h3>
-                            <p class="text-muted mb-0">
-                                Esta forma de entrega requiere una dirección.
-                       
-                            </p>
-                        </asp:Panel>
-
                         <div class="mb-3">
                             <asp:Label runat="server" AssociatedControlID="ddlPago"
                                 Text="Forma de pago" CssClass="form-label" />
@@ -40,6 +60,26 @@
                     </a>
                     </div>
                 </div>
+                <asp:Panel ID="pnlDireccion" runat="server"
+                    CssClass="card shadow-sm mt-3" Visible="false">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Dirección de envío</h2>
+
+                        <asp:RadioButtonList ID="rblDirecciones" runat="server"
+                            CssClass="lista-direcciones"
+                            RepeatLayout="UnorderedList" />
+
+                        <asp:Label ID="lblSinDirecciones" runat="server"
+                            CssClass="d-block text-muted mb-3"
+                            Visible="false" />
+
+                        <asp:Button ID="btnAgregarDireccion" runat="server"
+                            Text="+ Agregar nueva dirección"
+                            CssClass="btn btn-outline-primary btn-sm"
+                            CausesValidation="false"
+                            OnClick="btnAgregarDireccion_Click" />
+                    </div>
+                </asp:Panel>
             </div>
 
             <div class="col-12 col-lg-4">

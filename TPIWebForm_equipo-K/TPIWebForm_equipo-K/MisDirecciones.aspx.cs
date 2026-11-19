@@ -20,10 +20,19 @@ namespace TPIWebForm_equipo_K
                 Response.Redirect("Login.aspx");
                 return;
             }
-
             if (!IsPostBack)
             {
                 CargarDirecciones(usuario.Id);
+
+                if (Request.QueryString["origen"] == "compra")
+                {
+                    // Abrimos directamente el formulario desde la compra.
+                    pnlFormulario.Visible = true;
+                    btnNuevaDireccion.Visible = false;
+
+                    lnkCancelar.NavigateUrl =
+                        "~/FinalizarCompra.aspx?origen=direcciones";
+                }
             }
         }
 
@@ -95,6 +104,13 @@ namespace TPIWebForm_equipo_K
             {
                 lblAviso.Text = "No pudimos guardar la dirección. Intentá nuevamente.";
                 lblAviso.Visible = true;
+                return;
+            }
+
+            // Si venimos de la compra, regresamos después de guardar.
+            if (Request.QueryString["origen"] == "compra")
+            {
+                Response.Redirect("FinalizarCompra.aspx?origen=direcciones");
                 return;
             }
 

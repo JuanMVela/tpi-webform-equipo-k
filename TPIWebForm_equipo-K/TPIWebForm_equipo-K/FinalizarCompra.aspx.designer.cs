@@ -24,6 +24,15 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.DropDownList ddlEntrega;
 
         /// <summary>
+        /// Control ddlPago.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlPago;
+
+        /// <summary>
         /// Control pnlDireccion.
         /// </summary>
         /// <remarks>
@@ -33,13 +42,31 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.Panel pnlDireccion;
 
         /// <summary>
-        /// Control ddlPago.
+        /// Control rblDirecciones.
         /// </summary>
         /// <remarks>
         /// Campo generado automáticamente.
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlPago;
+        protected global::System.Web.UI.WebControls.RadioButtonList rblDirecciones;
+
+        /// <summary>
+        /// Control lblSinDirecciones.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSinDirecciones;
+
+        /// <summary>
+        /// Control btnAgregarDireccion.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAgregarDireccion;
 
         /// <summary>
         /// Control repResumen.
