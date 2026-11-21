@@ -43,7 +43,7 @@ namespace TPIWebForm_equipo_K
                 }
 
                 UsuarioNegocio negocio = new UsuarioNegocio();
-                Usuario usuarioLogueado = negocio.login(txtEmail.Text.Trim(), txtPassword.Text);
+                Usuario usuarioLogueado = negocio.login(txtEmail.Text.Trim(), txtPassword.Text.Trim());
 
                 if (usuarioLogueado != null)
                 {

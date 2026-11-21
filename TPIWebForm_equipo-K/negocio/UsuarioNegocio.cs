@@ -44,7 +44,7 @@ namespace negocio
                 // Buscamos al usuario que coincida con el email y la clave, y que esté activo
                 datos.setearConsulta("SELECT U.Id, U.Nombre, U.Apellido, U.Email, U.IdPerfil, P.Nombre AS NombrePerfil " +
                                      "FROM USUARIOS U INNER JOIN PERFILES P ON U.IdPerfil = P.Id " +
-                                     "WHERE U.Email = @Email AND U.PasswordHash = @Password AND U.Activo = 1");
+                                     "WHERE U.Email = @Email AND U.ClaveHash = @Password AND U.Activo = 1");
 
                 datos.setearParametro("@Email", email);
                 datos.setearParametro("@Password", password);
