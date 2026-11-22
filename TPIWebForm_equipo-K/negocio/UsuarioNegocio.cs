@@ -139,5 +139,65 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        public List<Usuario> listarTodos()
+        {
+            List<Usuario> lista = new List<Usuario>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta("SELECT U.Id, U.Nombre, U.Apellido, U.Email, U.IdPerfil, P.Nombre AS NombrePerfil, U.Activo " +
+                                     "FROM USUARIOS U INNER JOIN PERFILES P ON U.IdPerfil = P.Id " +
+                                     "ORDER BY U.Id");
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Usuario aux = new Usuario();
+                    aux.Id = (int)datos.Lector["Id"];
+                    aux.Nombre = (string)datos.Lector["Nombre"];
+                    aux.Apellido = (string)datos.Lector["Apellido"];
+                    aux.Email = (string)datos.Lector["Email"];
+                    aux.Activo = (bool)datos.Lector["Activo"];
+
+                    aux.Perfil = new Perfil();
+                    aux.Perfil.Id = (int)datos.Lector["IdPerfil"];
+                    aux.Perfil.Nombre = (string)datos.Lector["NombrePerfil"];
+
+                    lista.Add(aux);
+                }
+
+                return lista;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // 2. Cambiamos el estado (Activo / Inactivo) de un usuario
+        public void cambiarEstado(int idUsuario, bool activo)
+        {
+            AccesoDatos datos = new AccesoDatos();
+            try
+            {
+                datos.setearConsulta("UPDATE USUARIOS SET Activo = @Activo WHERE Id = @Id");
+                datos.setearParametro("@Activo", activo);
+                datos.setearParametro("@Id", idUsuario);
+                datos.ejecutarAccion();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

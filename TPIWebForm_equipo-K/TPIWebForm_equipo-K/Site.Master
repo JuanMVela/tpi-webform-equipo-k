@@ -30,7 +30,7 @@
                                 <a class="nav-link" href="Registro.aspx">Registrate</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="Login.aspx">Iniciá sesión</a>
+                                <a class="nav-link" href="Login.aspx">Inicia sesión</a>
                             </li>
                         </asp:PlaceHolder>
 
@@ -125,6 +125,7 @@
                                     <li><a class="dropdown-item" href="AdminFormasEntrega.aspx">Formas de Entrega</a></li>
                                     <li><a class="dropdown-item" href="AdminMarcas.aspx">Marcas</a></li>
                                     <li><a class="dropdown-item" href="AdminPedidos.aspx">Pedidos</a></li>
+                                    <li><a class="dropdown-item" href="AdminUsuarios.aspx">Usuarios</a></li>
                                 </ul>
                             </li>
                         </asp:PlaceHolder>
