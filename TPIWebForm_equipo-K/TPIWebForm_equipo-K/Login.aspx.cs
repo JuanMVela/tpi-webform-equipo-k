@@ -59,7 +59,7 @@ namespace TPIWebForm_equipo_K
                     if (usuarioLogueado.Perfil.Id == 2)
                     {
                         // Es Administrador, lo mandamos al panel de administración
-                        Response.Redirect("AdminProductos.aspx");
+                        Response.Redirect("AdminDashboard.aspx");
                     }
                     else
                     {
