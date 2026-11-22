@@ -35,7 +35,16 @@ namespace TPIWebForm_equipo_K
                 {
                     return;
                 }
+                // --- VALIDACIÓN DE LONGITUD
+                string nombre = txtNombre.Text.Trim();
+                string apellido = txtApellido.Text.Trim();
+                string email = txtEmail.Text.Trim();
 
+                if (nombre.Length > 100 || apellido.Length > 100 || email.Length > 150)
+                {
+                    Response.Write("<script>alert('Máximos permitidos: nombre y apellido 100 caracteres, email 150.');</script>");
+                    return;
+                } 
                 // 2. Creamos el objeto Usuario
                 Usuario nuevo = new Usuario();
                 nuevo.Nombre = txtNombre.Text.Trim();
