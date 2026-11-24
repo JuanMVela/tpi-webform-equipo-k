@@ -47,6 +47,11 @@ namespace TPIWebForm_equipo_K
 
         protected void dgvUsuarios_RowCommand(object sender, GridViewCommandEventArgs e)
         {
+            if (e.CommandName == "GuardarRol")
+            {
+                GuardarRol(e);
+                return;
+            }
             if (e.CommandName == "CambiarEstado")
             {
                 try
@@ -92,6 +97,92 @@ namespace TPIWebForm_equipo_K
         {
             dgvUsuarios.PageIndex = e.NewPageIndex;
             cargarGrilla();
+        }
+
+        // Bloqueamos las acciones sobre nuestra propia cuenta.
+        protected void dgvUsuarios_RowDataBound(
+            object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType != DataControlRowType.DataRow)
+            {
+                return;
+            }
+
+            Usuario usuarioFila = (Usuario)e.Row.DataItem;
+            Usuario administrador = Session["UsuarioLogueado"] as Usuario;
+
+            bool puedeModificar = administrador != null
+                && usuarioFila.Id != administrador.Id;
+
+            DropDownList ddlPerfil =
+                (DropDownList)e.Row.FindControl("ddlPerfil");
+
+            Button btnGuardarRol =
+                (Button)e.Row.FindControl("btnGuardarRol");
+
+            Button btnEstado =
+                (Button)e.Row.FindControl("btnEstado");
+
+            ddlPerfil.Enabled = puedeModificar;
+            btnGuardarRol.Enabled = puedeModificar;
+            btnEstado.Enabled = puedeModificar;
+        }
+
+        // Guardamos el rol seleccionado en la fila.
+        private void GuardarRol(GridViewCommandEventArgs e)
+        {
+            Usuario administrador = Session["UsuarioLogueado"] as Usuario;
+
+            if (administrador == null || administrador.Perfil == null
+                || administrador.Perfil.Id != 2)
+            {
+                Response.Redirect("Inicio.aspx");
+                return;
+            }
+
+            try
+            {
+                // Identificamos la fila del botón presionado.
+                Control boton = (Control)e.CommandSource;
+                GridViewRow fila = (GridViewRow)boton.NamingContainer;
+
+                int idUsuario =
+                    Convert.ToInt32(dgvUsuarios.DataKeys[fila.RowIndex].Value);
+
+                DropDownList ddlPerfil =
+                    (DropDownList)fila.FindControl("ddlPerfil");
+
+                int idPerfil = int.Parse(ddlPerfil.SelectedValue);
+
+                UsuarioNegocio negocio = new UsuarioNegocio();
+
+                bool actualizado = negocio.cambiarRol(
+                    idUsuario, idPerfil, administrador.Id);
+
+                lblAviso.CssClass = actualizado
+                    ? "d-block text-success mb-3"
+                    : "d-block text-danger mb-3";
+
+                lblAviso.Text = actualizado
+                    ? "Rol guardado. El usuario debe volver a iniciar sesión."
+                    : "No se pudo cambiar el rol. Verificá tus permisos.";
+
+                lblAviso.Visible = true;
+
+                cargarGrilla();
+            }
+            catch (ArgumentException ex)
+            {
+                lblAviso.CssClass = "d-block text-danger mb-3";
+                lblAviso.Text = Server.HtmlEncode(ex.Message);
+                lblAviso.Visible = true;
+            }
+            catch (Exception)
+            {
+                lblAviso.CssClass = "d-block text-danger mb-3";
+                lblAviso.Text = "No pudimos guardar el rol. Intentá nuevamente.";
+                lblAviso.Visible = true;
+            }
         }
     }
 }

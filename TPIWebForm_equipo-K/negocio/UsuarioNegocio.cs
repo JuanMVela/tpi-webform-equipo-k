@@ -199,6 +199,52 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+        // Cambiamos el rol de otra cuenta desde la administración.
+        public bool cambiarRol(int idUsuario, int idPerfil, int idAdministrador)
+        {
+            if (idPerfil != 1 && idPerfil != 2)
+            {
+                throw new ArgumentException("El perfil seleccionado no es válido.");
+            }
+
+            if (idUsuario == idAdministrador)
+            {
+                throw new ArgumentException("No podés cambiar tu propio rol.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+            UPDATE USUARIOS
+            SET IdPerfil = @IdPerfil
+            WHERE Id = @IdUsuario
+              AND Id <> @IdAdministrador
+              AND EXISTS (
+                  SELECT 1
+                  FROM USUARIOS
+                  WHERE Id = @IdAdministrador
+                    AND IdPerfil = 2
+                    AND Activo = 1
+              );
+
+            SELECT @@ROWCOUNT;
+        ");
+
+                datos.setearParametro("@IdUsuario", idUsuario);
+                datos.setearParametro("@IdPerfil", idPerfil);
+                datos.setearParametro("@IdAdministrador", idAdministrador);
+
+                int actualizados = datos.ejecutarEscalar();
+
+                return actualizados == 1;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
         // Comprobamos si ya existe una cuenta administradora.
         public bool existeAdministrador()
         {
