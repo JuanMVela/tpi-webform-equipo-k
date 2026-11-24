@@ -24,7 +24,7 @@ namespace TPIWebForm_equipo_K
                     // MODO MODIFICACIÓN
                     int idCategoria = int.Parse(id);
 
-                    
+
                     CategoriaNegocio negocio = new CategoriaNegocio();
                     List<Categoria> lista = negocio.listar();
                     Categoria seleccionada = lista.Find(x => x.Id == idCategoria);
@@ -113,6 +113,39 @@ namespace TPIWebForm_equipo_K
             {
                 Response.Write("<script>alert('Error: " + ex.Message + "');</script>");
             }
+        }
+
+        // Verificamos el acceso antes de cargar la página y sus eventos.
+        protected override void OnPreInit(EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            bool autorizado;
+
+            try
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                autorizado = negocio.esAdministradorActivo(usuario.Id);
+            }
+            catch (Exception)
+            {
+                throw new System.Web.HttpException(
+                    503, "No pudimos verificar tus permisos. Intentá nuevamente.");
+            }
+
+            if (!autorizado)
+            {
+                Response.Redirect("Inicio.aspx");
+                return;
+            }
+
+            base.OnPreInit(e);
         }
     }
 }

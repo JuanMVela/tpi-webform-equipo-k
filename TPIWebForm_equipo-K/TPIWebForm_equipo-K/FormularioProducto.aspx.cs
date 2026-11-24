@@ -114,7 +114,7 @@ namespace TPIWebForm_equipo_K
                 ProductoNegocio negocio = new ProductoNegocio();
 
                 string codigo = txtCodigo.Text.Trim();
-                               
+
 
                 lblErrorCodigo.Text = "Ya existe un producto con ese código. Ingresá otro.";
 
@@ -135,11 +135,11 @@ namespace TPIWebForm_equipo_K
                 string nombre = txtNombre.Text.Trim();
                 lblErrorNombre.Visible = false;
 
-                
+
                 // Verificamos que la descripción del producto esté cargada
                 string descripcion = txtDescripcion.Text.Trim();
-                lblErrorDescripcion.Visible = false;                           
-               
+                lblErrorDescripcion.Visible = false;
+
 
                 // Verificamos que el precio sea un valor numérico
                 decimal precio;
@@ -160,7 +160,7 @@ namespace TPIWebForm_equipo_K
                     return;
                 }
 
-                                
+
                 //Verificamos que el stock sea un número entero
                 int stock;
                 try
@@ -298,6 +298,40 @@ namespace TPIWebForm_equipo_K
                 // Limpiamos el TextBox
                 txtUrlImagen.Text = "";
             }
+        }
+
+        // Verificamos el acceso antes de cargar la página y sus eventos.
+        protected override void OnPreInit(EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            bool autorizado;
+
+            try
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                autorizado = negocio.esAdministradorActivo(usuario.Id);
+            }
+            catch (Exception)
+            {
+                // Si falla la comprobación, no permitimos continuar.
+                throw new System.Web.HttpException(
+                    503, "No pudimos verificar tus permisos. Intentá nuevamente.");
+            }
+
+            if (!autorizado)
+            {
+                Response.Redirect("Inicio.aspx");
+                return;
+            }
+
+            base.OnPreInit(e);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace TPIWebForm_equipo_K
             dgvFormasEntrega.DataSource = negocio.listar();
             dgvFormasEntrega.DataBind();
         }
-        
+
         // Gestiona las acciones de la forma de entrega seleccionada
         protected void dgvFormasEntrega_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -86,6 +86,39 @@ namespace TPIWebForm_equipo_K
 
             dgvFormasEntrega.DataSource = lista;
             dgvFormasEntrega.DataBind();
+        }
+
+        // Verificamos el acceso antes de cargar la página y sus eventos.
+        protected override void OnPreInit(EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            bool autorizado;
+
+            try
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                autorizado = negocio.esAdministradorActivo(usuario.Id);
+            }
+            catch (Exception)
+            {
+                throw new System.Web.HttpException(
+                    503, "No pudimos verificar tus permisos. Intentá nuevamente.");
+            }
+
+            if (!autorizado)
+            {
+                Response.Redirect("Inicio.aspx");
+                return;
+            }
+
+            base.OnPreInit(e);
         }
     }
 }

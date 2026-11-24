@@ -19,7 +19,7 @@ namespace TPIWebForm_equipo_K
             dgvFormasPago.DataSource = negocio.listar();
             dgvFormasPago.DataBind();
         }
-       
+
         // Filtra las formas de pago por nombre
         protected void txtFiltro_TextChanged(object sender, EventArgs e)
         {
@@ -36,7 +36,7 @@ namespace TPIWebForm_equipo_K
             dgvFormasPago.DataSource = lista;
             dgvFormasPago.DataBind();
         }
-       
+
         // Gestiona las acciones de la fila seleccionada
         protected void dgvFormasPago_RowCommand(object sender, GridViewCommandEventArgs e)
         {
@@ -70,6 +70,38 @@ namespace TPIWebForm_equipo_K
             {
                 cargarGrilla();
             }
+        }
+        // Verificamos el acceso antes de cargar la página y sus eventos.
+        protected override void OnPreInit(EventArgs e)
+        {
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx");
+                return;
+            }
+
+            bool autorizado;
+
+            try
+            {
+                UsuarioNegocio negocio = new UsuarioNegocio();
+                autorizado = negocio.esAdministradorActivo(usuario.Id);
+            }
+            catch (Exception)
+            {
+                throw new System.Web.HttpException(
+                    503, "No pudimos verificar tus permisos. Intentá nuevamente.");
+            }
+
+            if (!autorizado)
+            {
+                Response.Redirect("Inicio.aspx");
+                return;
+            }
+
+            base.OnPreInit(e);
         }
     }
 }

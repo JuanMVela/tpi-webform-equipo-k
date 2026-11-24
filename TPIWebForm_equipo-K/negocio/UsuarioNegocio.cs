@@ -318,5 +318,26 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        // Comprobamos el permiso actual del usuario en la base.
+        public bool esAdministradorActivo(int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT COUNT(*) FROM USUARIOS " +
+                    "WHERE Id = @Id AND IdPerfil = 2 AND Activo = 1");
+
+                datos.setearParametro("@Id", idUsuario);
+
+                return datos.ejecutarEscalar() == 1;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
