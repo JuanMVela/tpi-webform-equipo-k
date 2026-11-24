@@ -44,7 +44,7 @@ namespace negocio
                 // Buscamos al usuario que coincida con el email y la clave, y que esté activo
                 datos.setearConsulta("SELECT U.Id, U.Nombre, U.Apellido, U.Email, U.IdPerfil, P.Nombre AS NombrePerfil " +
                                      "FROM USUARIOS U INNER JOIN PERFILES P ON U.IdPerfil = P.Id " +
-                                     "WHERE U.Email = @Email AND U.ClaveHash = @Password AND U.Activo = 1");
+                                     "WHERE U.Email = @Email AND U.PasswordHash = @Password AND U.Activo = 1");
 
                 datos.setearParametro("@Email", email);
                 datos.setearParametro("@Password", password);
@@ -193,6 +193,79 @@ namespace negocio
             catch (Exception ex)
             {
                 throw ex;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        // Comprobamos si ya existe una cuenta administradora.
+        public bool existeAdministrador()
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT COUNT(*) FROM USUARIOS WHERE IdPerfil = 2");
+
+                int cantidad = datos.ejecutarEscalar();
+
+                return cantidad > 0;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+        // Asignamos el primer administrador si todavía no existe ninguno.
+        public bool configurarPrimerAdministrador(int idUsuario)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+            SET XACT_ABORT ON;
+
+            BEGIN TRY
+                BEGIN TRANSACTION;
+
+                DECLARE @Cantidad INT;
+                DECLARE @Actualizados INT = 0;
+
+                SELECT @Cantidad = COUNT(*)
+                FROM USUARIOS WITH (TABLOCKX, HOLDLOCK)
+                WHERE IdPerfil = 2;
+
+                IF @Cantidad = 0
+                BEGIN
+                    UPDATE USUARIOS
+                    SET IdPerfil = 2
+                    WHERE Id = @IdUsuario
+                      AND Activo = 1
+                      AND IdPerfil = 1;
+
+                    SET @Actualizados = @@ROWCOUNT;
+                END;
+
+                COMMIT TRANSACTION;
+
+                SELECT @Actualizados;
+            END TRY
+            BEGIN CATCH
+                IF @@TRANCOUNT > 0
+                    ROLLBACK TRANSACTION;
+
+                THROW;
+            END CATCH;
+        ");
+
+                datos.setearParametro("@IdUsuario", idUsuario);
+
+                int actualizados = datos.ejecutarEscalar();
+
+                return actualizados == 1;
             }
             finally
             {

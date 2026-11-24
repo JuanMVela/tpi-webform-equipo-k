@@ -77,6 +77,7 @@
     <Content Include="AdminUsuarios.aspx" />
     <Content Include="Carrito.aspx" />
     <Content Include="Catalogo.aspx" />
+    <Content Include="ConfiguracionInicial.aspx" />
     <Content Include="DetalleProducto.aspx" />
     <Content Include="FinalizarCompra.aspx" />
     <Content Include="FormularioCategoria.aspx" />
@@ -164,6 +165,13 @@
     </Compile>
     <Compile Include="Catalogo.aspx.designer.cs">
       <DependentUpon>Catalogo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ConfiguracionInicial.aspx.cs">
+      <DependentUpon>ConfiguracionInicial.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ConfiguracionInicial.aspx.designer.cs">
+      <DependentUpon>ConfiguracionInicial.aspx</DependentUpon>
     </Compile>
     <Compile Include="DetalleProducto.aspx.cs">
       <DependentUpon>DetalleProducto.aspx</DependentUpon>
