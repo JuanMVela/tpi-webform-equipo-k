@@ -120,14 +120,22 @@ namespace TPIWebForm_equipo_K
                 lblSinDirecciones.Visible = true;
             }
         }
-        private void CargarResumen(Dictionary<int, int> carrito)
+        // Mostramos los productos y el total de la compra.
+        private void CargarResumen(
+            Dictionary<int, int> carrito, List<Producto> productos = null)
         {
-            ProductoNegocio negocio = new ProductoNegocio();
-            var productos = negocio.listarActivo();
+            // Consultamos los productos solo si no recibimos una lista.
+            if (productos == null)
+            {
+                ProductoNegocio negocio = new ProductoNegocio();
+                productos = negocio.listarActivo();
+            }
+
+            lblAvisoResumen.Visible = false;
+
             var filas = new List<object>();
             decimal subtotalCompra = 0;
 
-            // La sesión aporta la cantidad y negocio aporta el precio.
             foreach (var item in carrito)
             {
                 var producto = productos.Find(p => p.Id == item.Key);
@@ -154,7 +162,8 @@ namespace TPIWebForm_equipo_K
 
             if (filas.Count < carrito.Count)
             {
-                lblAvisoResumen.Text = "Hay productos que ya no están disponibles. Revisá el carrito.";
+                lblAvisoResumen.Text =
+                    "Hay productos que ya no están disponibles. Revisá el carrito.";
                 lblAvisoResumen.Visible = true;
             }
         }
@@ -225,6 +234,9 @@ namespace TPIWebForm_equipo_K
         protected void btnContinuar_Click(object sender, EventArgs e)
         {
             lblAvisoCompra.Visible = false;
+            // Ocultamos la revisión antes de validar nuevamente.
+            pnlRevision.Visible = false;
+            lblAvisoCompra.CssClass = "d-block text-danger mt-3";
 
             Usuario usuario = Session["UsuarioLogueado"] as Usuario;
 
@@ -290,7 +302,7 @@ namespace TPIWebForm_equipo_K
                 }
 
                 // Actualizamos el resumen con los precios actuales.
-                CargarResumen(carrito);
+                CargarResumen(carrito, productos);
                 int idEntrega = int.Parse(ddlEntrega.SelectedValue);
                 int idPago = int.Parse(ddlPago.SelectedValue);
 
@@ -321,6 +333,18 @@ namespace TPIWebForm_equipo_K
                     return;
                 }
 
+                // Preparamos el pedido que el cliente va a revisar.
+                Pedido pedido = new Pedido();
+
+                pedido.Cliente = usuario;
+                pedido.FormaEntrega = entrega;
+                pedido.FormaPago = pago;
+                pedido.IdEstado = 1;
+
+                // Mostramos el domicilio solamente si corresponde.
+                pnlRevisionDireccion.Visible = entrega.RequiereDireccion;
+                lblRevisionDireccion.Text = "";
+
                 if (entrega.RequiereDireccion)
                 {
                     int idDireccion = int.Parse(rblDirecciones.SelectedValue);
@@ -336,7 +360,44 @@ namespace TPIWebForm_equipo_K
                         lblAvisoCompra.Visible = true;
                         return;
                     }
+
+                    // Armamos el domicilio con los datos de la base.
+                    string domicilio = direccion.Calle + " " + direccion.Numero
+                        + " — " + direccion.Localidad
+                        + " · CP " + direccion.CodigoPostal;
+
+                    lblRevisionDireccion.Text = Server.HtmlEncode(domicilio);
+                    pedido.Direccion = direccion;
                 }
+
+                // Mostramos las opciones que acabamos de validar.
+                lblRevisionEntrega.Text = Server.HtmlEncode(entrega.Nombre);
+                lblRevisionPago.Text = Server.HtmlEncode(pago.Nombre);
+
+                // Conservamos cantidades y precios mostrados en la revisión.
+                foreach (var item in carrito)
+                {
+                    var producto = productos.Find(p => p.Id == item.Key);
+
+                    DetallePedido detalle = new DetallePedido();
+
+                    detalle.Producto = producto;
+                    detalle.Cantidad = item.Value;
+                    detalle.PrecioUnitario = producto.Precio;
+
+                    pedido.Detalles.Add(detalle);
+                }
+
+                // Identificamos esta revisión con una clave propia.
+                string claveRevision = "PedidoRevision_" + Guid.NewGuid().ToString();
+
+                Session[claveRevision] = pedido;
+                ViewState["ClaveRevision"] = claveRevision;
+                pnlRevision.Visible = true;
+                // Ocultamos la edición mientras mostramos la revisión.
+                pnlDatosCompra.Visible = false;
+                btnContinuar.Visible = false;
+                btnConfirmarCompra.Visible = true;
             }
             catch (Exception)
             {
@@ -347,11 +408,115 @@ namespace TPIWebForm_equipo_K
                 return;
             }
 
-            // Mensaje provisional mientras armamos la confirmación.
+        }
+
+        // Volvemos a editar las opciones de compra.
+        protected void btnEditarCompra_Click(object sender, EventArgs e)
+        {
+            pnlRevision.Visible = false;
+            pnlDatosCompra.Visible = true;
+            btnContinuar.Visible = true;
+            lblAvisoCompra.Visible = false;
+
+            btnConfirmarCompra.Visible = false;
+
+            // Descartamos el pedido preparado antes de editar.
+            string claveRevision = ViewState["ClaveRevision"] as string;
+
+            if (claveRevision != null)
+            {
+                Session.Remove(claveRevision);
+            }
+
+            ViewState.Remove("ClaveRevision");
+        }
+
+        // Confirmamos el pedido que el cliente revisó.
+        protected void btnConfirmarCompra_Click(object sender, EventArgs e)
+        {
+            lblAvisoCompra.Visible = false;
+            lblAvisoCompra.CssClass = "d-block text-danger mt-3";
+
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx?origen=compra");
+                return;
+            }
+
+            string claveRevision = ViewState["ClaveRevision"] as string;
+
+            if (claveRevision == null)
+            {
+                lblAvisoCompra.Text = "Volvé a revisar la compra antes de confirmar.";
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+
+            Pedido pedido = Session[claveRevision] as Pedido;
+
+            if (pedido == null || pedido.Cliente.Id != usuario.Id)
+            {
+                lblAvisoCompra.Text =
+                    "La revisión ya no está disponible. Volvé a editar la compra.";
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+
+            var carrito = Session["Carrito"] as Dictionary<int, int>;
+
+            // Comprobamos que el carrito coincida con lo revisado.
+            if (carrito == null ||
+                carrito.Count != pedido.Detalles.Count ||
+                !pedido.Detalles.All(detalle =>
+                    carrito.ContainsKey(detalle.Producto.Id) &&
+                    carrito[detalle.Producto.Id] == detalle.Cantidad))
+            {
+                lblAvisoCompra.Text =
+                    "El carrito cambió. Volvé a editar y revisar la compra.";
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+
+            int idPedido;
+
+            try
+            {
+                PedidoNegocio negocio = new PedidoNegocio();
+                idPedido = negocio.confirmarCompra(pedido);
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                System.Diagnostics.Trace.TraceError(ex.ToString());
+
+                lblAvisoCompra.Text = Server.HtmlEncode(ex.Message);
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+            catch (Exception ex)
+            {
+                lblAvisoCompra.Text = Server.HtmlEncode(ex.Message);
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+
+            // Limpiamos solamente después del guardado correcto.
+            Session.Remove(claveRevision);
+            ViewState.Remove("ClaveRevision");
+            Session.Remove("Carrito");
+
+            pnlRevision.Visible = false;
+            pnlDatosCompra.Visible = false;
+            btnContinuar.Visible = false;
+            btnConfirmarCompra.Visible = false;
+
             lblAvisoCompra.CssClass = "d-block text-success mt-3";
             lblAvisoCompra.Text =
-    "Los datos de la compra son válidos. Todavía no se generó el pedido.";
+                "Pedido #" + idPedido + " registrado. Estado: Pendiente de pago.";
             lblAvisoCompra.Visible = true;
         }
+
+
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace negocio
 {
     internal class AccesoDatos
@@ -19,6 +20,7 @@ namespace negocio
         {
             get { return lector; }
         }
+        private SqlTransaction transaccion;
 
         public AccesoDatos()
         {
@@ -35,34 +37,30 @@ namespace negocio
             comando.CommandText = consulta;
         }
 
+        // Ejecutamos una consulta para leer sus resultados.
         public void ejecutarLectura()
         {
             comando.Connection = conexion;
 
-            try
+            if (conexion.State != ConnectionState.Open)
             {
                 conexion.Open();
-                lector = comando.ExecuteReader();
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            lector = comando.ExecuteReader();
         }
 
-        public void ejecutarAccion()
+        // Ejecutamos una operación y devolvemos las filas afectadas.
+        public int ejecutarAccion()
         {
             comando.Connection = conexion;
 
-            try
+            if (conexion.State != ConnectionState.Open)
             {
                 conexion.Open();
-                comando.ExecuteNonQuery();
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return comando.ExecuteNonQuery();
         }
 
         public void setearParametro(string nombre, object valor)
@@ -84,22 +82,68 @@ namespace negocio
             comando.CommandText = nombreSP;
         }
 
+        // Ejecutamos una consulta que devuelve un número entero.
         public int ejecutarEscalar()
         {
             comando.Connection = conexion;
+
             try
             {
-                conexion.Open();
-                // ExecuteScalar devuelve la primera columna de la primera fila (el OUTPUT de nuestro SP)
-                return int.Parse(comando.ExecuteScalar().ToString());
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                if (conexion.State != ConnectionState.Open)
+                {
+                    conexion.Open();
+                }
+
+                return Convert.ToInt32(comando.ExecuteScalar());
             }
             finally
             {
-                conexion.Close();
+                // Sin transacción, conservamos el cierre habitual.
+                if (comando.Transaction == null)
+                {
+                    conexion.Close();
+                }
+            }
+        }
+
+        // Abrimos la conexión e iniciamos la transacción.
+        public void iniciarTransaccion()
+        {
+            if (conexion.State != ConnectionState.Open)
+            {
+                conexion.Open();
+            }
+
+            transaccion = conexion.BeginTransaction();
+
+            comando.Connection = conexion;
+            comando.Transaction = transaccion;
+        }
+
+        // Confirmamos los cambios realizados.
+        public void confirmarTransaccion()
+        {
+            transaccion.Commit();
+        }
+
+        // Deshacemos los cambios realizados.
+        public void cancelarTransaccion()
+        {
+            transaccion.Rollback();
+        }
+
+        // Quitamos los parámetros de la consulta anterior.
+        public void limpiarParametros()
+        {
+            comando.Parameters.Clear();
+        }
+        // Cerramos la lectura sin cerrar la conexión.
+        public void cerrarLector()
+        {
+            if (lector != null)
+            {
+                lector.Close();
+                lector = null;
             }
         }
     }
