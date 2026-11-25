@@ -24,6 +24,15 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.DropDownList ddlEntrega;
 
         /// <summary>
+        /// Control rfvEntrega.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvEntrega;
+
+        /// <summary>
         /// Control ddlPago.
         /// </summary>
         /// <remarks>
@@ -31,6 +40,15 @@ namespace TPIWebForm_equipo_K
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlPago;
+
+        /// <summary>
+        /// Control rfvPago.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvPago;
 
         /// <summary>
         /// Control pnlDireccion.
@@ -49,6 +67,15 @@ namespace TPIWebForm_equipo_K
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButtonList rblDirecciones;
+
+        /// <summary>
+        /// Control rfvDireccion.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvDireccion;
 
         /// <summary>
         /// Control lblSinDirecciones.
@@ -94,5 +121,23 @@ namespace TPIWebForm_equipo_K
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSubtotalCompra;
+
+        /// <summary>
+        /// Control lblAvisoCompra.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblAvisoCompra;
+
+        /// <summary>
+        /// Control btnContinuar.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnContinuar;
     }
 }

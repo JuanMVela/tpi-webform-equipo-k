@@ -140,5 +140,68 @@ namespace TPIWebForm_equipo_K
             CargarCarrito();
         }
 
+        // Comprobamos disponibilidad antes de continuar con la compra.
+        protected void btnContinuarCompra_Click(object sender, EventArgs e)
+        {
+            lblAviso.Visible = false;
+            lblAviso.CssClass = "d-block mb-3 text-danger";
+
+            var carrito = Session["Carrito"] as Dictionary<int, int>;
+
+            if (carrito == null || carrito.Count == 0)
+            {
+                CargarCarrito();
+                return;
+            }
+
+            try
+            {
+                ProductoNegocio negocio = new ProductoNegocio();
+                var productos = negocio.listarActivo();
+
+                foreach (var item in carrito)
+                {
+                    Producto producto = productos.Find(p => p.Id == item.Key);
+
+                    if (producto == null)
+                    {
+                        lblAviso.Text =
+                            "Un producto ya no está disponible. Revisá el carrito.";
+                        lblAviso.Visible = true;
+                        return;
+                    }
+
+                    if (item.Value <= 0)
+                    {
+                        lblAviso.Text =
+                            "Hay una cantidad inválida. Revisá el carrito.";
+                        lblAviso.Visible = true;
+                        return;
+                    }
+
+                    if (item.Value > producto.Stock)
+                    {
+                        lblAviso.Text =
+                            "No hay stock suficiente de "
+                            + Server.HtmlEncode(producto.Nombre)
+                            + ". Solicitaste " + item.Value
+                            + " y hay " + producto.Stock
+                            + " disponibles. Reducí la cantidad para continuar.";
+
+                        lblAviso.Visible = true;
+                        return;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                lblAviso.Text =
+                    "No pudimos comprobar el stock. Intentá nuevamente.";
+                lblAviso.Visible = true;
+                return;
+            }
+
+            Response.Redirect("FinalizarCompra.aspx");
+        }
     }
 }

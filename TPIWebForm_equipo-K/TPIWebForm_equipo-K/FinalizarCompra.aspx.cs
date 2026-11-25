@@ -221,5 +221,137 @@ namespace TPIWebForm_equipo_K
 
             Session.Remove(clave);
         }
+        // Validamos las opciones antes de preparar la confirmación.
+        protected void btnContinuar_Click(object sender, EventArgs e)
+        {
+            lblAvisoCompra.Visible = false;
+
+            Usuario usuario = Session["UsuarioLogueado"] as Usuario;
+
+            if (usuario == null)
+            {
+                Response.Redirect("Login.aspx?origen=compra");
+                return;
+            }
+
+            Page.Validate("Compra");
+
+            if (!Page.IsValid)
+            {
+                return;
+            }
+
+            try
+            {
+                // Recuperamos el carrito actual.
+                var carrito = Session["Carrito"] as Dictionary<int, int>;
+
+                if (carrito == null || carrito.Count == 0)
+                {
+                    lblAvisoCompra.Text = "El carrito está vacío.";
+                    lblAvisoCompra.Visible = true;
+                    return;
+                }
+
+                // Consultamos los productos actuales de la base.
+                ProductoNegocio productoNegocio = new ProductoNegocio();
+                var productos = productoNegocio.listarActivo();
+
+                foreach (var item in carrito)
+                {
+                    var producto = productos.Find(p => p.Id == item.Key);
+
+                    if (producto == null)
+                    {
+                        lblAvisoCompra.Text =
+                            "Hay un producto que ya no está disponible. Revisá el carrito.";
+                        lblAvisoCompra.Visible = true;
+                        return;
+                    }
+
+                    if (item.Value <= 0)
+                    {
+                        lblAvisoCompra.Text =
+                            "Hay una cantidad inválida. Revisá el carrito.";
+                        lblAvisoCompra.Visible = true;
+                        return;
+                    }
+
+                    if (item.Value > producto.Stock)
+                    {
+                        lblAvisoCompra.Text =
+                            "No hay stock suficiente de "
+                            + Server.HtmlEncode(producto.Nombre)
+                            + ". Stock disponible: " + producto.Stock + ".";
+
+                        lblAvisoCompra.Visible = true;
+                        return;
+                    }
+                }
+
+                // Actualizamos el resumen con los precios actuales.
+                CargarResumen(carrito);
+                int idEntrega = int.Parse(ddlEntrega.SelectedValue);
+                int idPago = int.Parse(ddlPago.SelectedValue);
+
+                // Comprobamos que las opciones sigan activas.
+                FormaEntregaNegocio entregaNegocio = new FormaEntregaNegocio();
+                var entrega = entregaNegocio.listar().Find(
+                    item => item.Id == idEntrega && item.Activo);
+
+                FormaPagoNegocio pagoNegocio = new FormaPagoNegocio();
+                var pago = pagoNegocio.listar().Find(
+                    item => item.Id == idPago && item.Activo);
+
+                if (entrega == null || pago == null)
+                {
+                    lblAvisoCompra.Text =
+                        "La entrega o el pago ya no están disponibles. Recargá la página.";
+                    lblAvisoCompra.Visible = true;
+                    return;
+                }
+
+                // La base determina si hace falta un domicilio.
+                pnlDireccion.Visible = entrega.RequiereDireccion;
+
+                Page.Validate("Compra");
+
+                if (!Page.IsValid)
+                {
+                    return;
+                }
+
+                if (entrega.RequiereDireccion)
+                {
+                    int idDireccion = int.Parse(rblDirecciones.SelectedValue);
+
+                    DireccionNegocio direccionNegocio = new DireccionNegocio();
+                    var direccion = direccionNegocio.listarPorUsuario(usuario.Id)
+                        .Find(item => item.Id == idDireccion && item.Activo);
+
+                    if (direccion == null)
+                    {
+                        lblAvisoCompra.Text =
+                            "La dirección seleccionada ya no está disponible.";
+                        lblAvisoCompra.Visible = true;
+                        return;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                lblAvisoCompra.CssClass = "d-block text-danger mt-3";
+                lblAvisoCompra.Text =
+                    "No pudimos validar las opciones. Recargá la página e intentá nuevamente.";
+                lblAvisoCompra.Visible = true;
+                return;
+            }
+
+            // Mensaje provisional mientras armamos la confirmación.
+            lblAvisoCompra.CssClass = "d-block text-success mt-3";
+            lblAvisoCompra.Text =
+    "Los datos de la compra son válidos. Todavía no se generó el pedido.";
+            lblAvisoCompra.Visible = true;
+        }
     }
 }

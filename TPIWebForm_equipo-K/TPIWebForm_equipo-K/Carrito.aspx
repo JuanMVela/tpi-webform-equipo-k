@@ -93,8 +93,11 @@
                             <asp:Label ID="lblTotal" runat="server" />
 
                         </div>
-                        <a href="FinalizarCompra.aspx" class="btn btn-success w-100 mt-3">Continuar compra
-</a>
+                        <asp:Button ID="btnContinuarCompra" runat="server"
+                            Text="Continuar compra"
+                            CssClass="btn btn-success w-100 mt-3"
+                            CausesValidation="false"
+                            OnClick="btnContinuarCompra_Click" />
                     </div>
                 </asp:Panel>
             </div>

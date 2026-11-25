@@ -47,6 +47,14 @@
                             <asp:DropDownList ID="ddlEntrega" runat="server"
                                 CssClass="form-select" AutoPostBack="true"
                                 OnSelectedIndexChanged="ddlEntrega_SelectedIndexChanged" />
+                            <asp:RequiredFieldValidator ID="rfvEntrega" runat="server"
+                                ControlToValidate="ddlEntrega"
+                                InitialValue=""
+                                ErrorMessage="Seleccioná una forma de entrega."
+                                CssClass="text-danger"
+                                Display="Dynamic"
+                                ValidationGroup="Compra"
+                                EnableClientScript="false" />
                         </div>
 
                         <div class="mb-3">
@@ -54,6 +62,14 @@
                                 Text="Forma de pago" CssClass="form-label" />
                             <asp:DropDownList ID="ddlPago" runat="server"
                                 CssClass="form-select" />
+                            <asp:RequiredFieldValidator ID="rfvPago" runat="server"
+                                ControlToValidate="ddlPago"
+                                InitialValue=""
+                                ErrorMessage="Seleccioná una forma de pago."
+                                CssClass="text-danger"
+                                Display="Dynamic"
+                                ValidationGroup="Compra"
+                                EnableClientScript="false" />
                         </div>
 
                         <a href="Carrito.aspx" class="btn btn-outline-secondary">Volver al carrito
@@ -68,6 +84,13 @@
                         <asp:RadioButtonList ID="rblDirecciones" runat="server"
                             CssClass="lista-direcciones"
                             RepeatLayout="UnorderedList" />
+                        <asp:RequiredFieldValidator ID="rfvDireccion" runat="server"
+                            ControlToValidate="rblDirecciones"
+                            ErrorMessage="Seleccioná una dirección de envío."
+                            CssClass="text-danger"
+                            Display="Dynamic"
+                            ValidationGroup="Compra"
+                            EnableClientScript="false" />
 
                         <asp:Label ID="lblSinDirecciones" runat="server"
                             CssClass="d-block text-muted mb-3"
@@ -106,6 +129,15 @@
                             <span>Subtotal de productos</span>
                             <asp:Label ID="lblSubtotalCompra" runat="server" />
                         </div>
+                        <asp:Label ID="lblAvisoCompra" runat="server"
+                            CssClass="d-block text-danger mt-3"
+                            Visible="false" />
+
+                        <asp:Button ID="btnContinuar" runat="server"
+                            Text="Continuar"
+                            CssClass="btn btn-primary w-100 mt-3"
+                            ValidationGroup="Compra"
+                            OnClick="btnContinuar_Click" />
                     </div>
                 </div>
             </div>
