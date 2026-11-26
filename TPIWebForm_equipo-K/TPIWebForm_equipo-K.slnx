@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="dominio/dominio.csproj" Id="e59df73f-1307-4f35-98dd-3f4f4f10d57d" />
+  <Project Path="Ecommerce-API/Ecommerce-API.csproj" Id="1dc5417f-2453-47dd-afb9-d5b8624a7c5a" />
   <Project Path="negocio/negocio.csproj" Id="084acccd-0ba4-48da-9e60-7269bcb3dc23" />
   <Project Path="TPIWebForm_equipo-K/TPIWebForm_equipo-K.csproj" Id="d6381454-9bf0-48e3-8b3c-60cfb453f264" />
 </Solution>
