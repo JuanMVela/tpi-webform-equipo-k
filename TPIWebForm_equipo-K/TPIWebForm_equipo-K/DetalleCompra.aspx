@@ -153,6 +153,47 @@
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>
+                <asp:Panel ID="pnlCargaComprobante" runat="server"
+                    CssClass="mt-4" Visible="false">
+
+                    <hr class="my-4" />
+
+                    <h2 class="h5 mb-3">Comprobante de pago</h2>
+                    <asp:Label ID="lblComprobanteActual" runat="server"
+                        CssClass="d-block mb-3"
+                        Visible="false" />
+
+                    <p class="text-muted">
+                        Adjuntá un comprobante de prueba en formato PDF, JPG o PNG.
+        Tamaño máximo: 2 MB.
+   
+                    </p>
+
+                    <asp:Label runat="server"
+                        AssociatedControlID="fuComprobante"
+                        Text="Seleccioná el archivo"
+                        CssClass="form-label" />
+
+                    <asp:FileUpload ID="fuComprobante" runat="server"
+                        CssClass="form-control"
+                        accept=".pdf,.jpg,.jpeg,.png" />
+
+                    <asp:Label ID="lblAvisoComprobante" runat="server"
+                        CssClass="d-block mt-2"
+                        Visible="false" />
+
+                    <asp:Button ID="btnSubirComprobante" runat="server"
+                        Text="Cargar comprobante"
+                        CssClass="btn btn-primary mt-3"
+                        CausesValidation="false"
+                        OnClick="btnSubirComprobante_Click" />
+
+                    <p class="small text-muted mt-3 mb-0">
+                        La carga del comprobante no confirma el pago.
+        Será revisado por el administrador.
+   
+                    </p>
+                </asp:Panel>
             </div>
 
 

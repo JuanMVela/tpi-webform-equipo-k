@@ -174,6 +174,9 @@
     <Compile Include="ConfiguracionInicial.aspx.designer.cs">
       <DependentUpon>ConfiguracionInicial.aspx</DependentUpon>
     </Compile>
+    <Compile Include="DescargarComprobante.ashx.cs">
+      <DependentUpon>DescargarComprobante.ashx</DependentUpon>
+    </Compile>
     <Compile Include="DetalleCompra.aspx.cs">
       <DependentUpon>DetalleCompra.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -286,6 +289,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DescargarComprobante.ashx" />
     <None Include="packages.config" />
     <Content Include="Site.Master" />
     <None Include="Web.Debug.config">
