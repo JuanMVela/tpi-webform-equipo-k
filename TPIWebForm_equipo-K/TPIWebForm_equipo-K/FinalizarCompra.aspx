@@ -38,6 +38,31 @@
 
         <div class="row g-3 align-items-start">
             <div class="col-12 col-lg-8">
+                <asp:Panel ID="pnlCompraRegistrada" runat="server"
+                    CssClass="card shadow-sm border-success"
+                    Visible="false">
+
+                    <div class="card-body">
+                        <h2 class="h4 text-success mb-3">¡Tu pedido fue registrado!</h2>
+
+                        <asp:Label ID="lblNumeroPedido" runat="server"
+                            CssClass="d-block fw-bold mb-2" />
+
+                        <p class="mb-3">
+                            Estado: <strong>Pendiente de pago</strong>.
+       
+                        </p>
+
+                        <p class="text-muted">
+                            Gracias por tu compra. Tu pedido quedó registrado
+            y está pendiente de la confirmación del pago.
+       
+                        </p>
+
+                        <a href="Inicio.aspx" class="btn btn-outline-primary">Volver al inicio
+        </a>
+                    </div>
+                </asp:Panel>
                 <asp:Panel ID="pnlRevision" runat="server"
                     CssClass="card shadow-sm mb-3" Visible="false">
 

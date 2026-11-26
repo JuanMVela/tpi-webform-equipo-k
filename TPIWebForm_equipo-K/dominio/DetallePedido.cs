@@ -12,5 +12,13 @@ namespace dominio
         public Producto Producto { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
+        // Calculamos el importe de este producto.
+        public decimal Subtotal
+        {
+            get
+            {
+                return PrecioUnitario * Cantidad;
+            }
+        }
     }
 }

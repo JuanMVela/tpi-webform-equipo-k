@@ -277,5 +277,132 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        // Listamos únicamente los pedidos del cliente indicado.
+        public List<Pedido> listarPorCliente(int idCliente)
+        {
+            List<Pedido> pedidos = new List<Pedido>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT P.Id, P.Fecha, P.Total, P.IdEstado, " +
+                    "E.Nombre AS NombreEstado " +
+                    "FROM PEDIDOS P " +
+                    "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
+                    "WHERE P.IdCliente = @IdCliente " +
+                    "ORDER BY P.Fecha DESC, P.Id DESC");
+
+                datos.setearParametro("@IdCliente", idCliente);
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Pedido pedido = new Pedido();
+
+                    pedido.Id = (int)datos.Lector["Id"];
+                    pedido.FechaCreacion = (DateTime)datos.Lector["Fecha"];
+                    pedido.Total = (decimal)datos.Lector["Total"];
+                    pedido.IdEstado = (int)datos.Lector["IdEstado"];
+                    pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
+
+                    pedidos.Add(pedido);
+                }
+
+                return pedidos;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Buscamos un pedido que pertenezca al cliente.
+        public Pedido obtenerPorCliente(int idPedido, int idCliente)
+        {
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT P.Id, P.Fecha, P.Total, P.IdEstado, " +
+                    "E.Nombre AS NombreEstado " +
+                    "FROM PEDIDOS P " +
+                    "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
+                    "WHERE P.Id = @IdPedido AND P.IdCliente = @IdCliente");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.setearParametro("@IdCliente", idCliente);
+
+                datos.ejecutarLectura();
+
+                if (datos.Lector.Read())
+                {
+                    Pedido pedido = new Pedido();
+
+                    pedido.Id = (int)datos.Lector["Id"];
+                    pedido.FechaCreacion = (DateTime)datos.Lector["Fecha"];
+                    pedido.Total = (decimal)datos.Lector["Total"];
+                    pedido.IdEstado = (int)datos.Lector["IdEstado"];
+                    pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
+
+                    return pedido;
+                }
+
+                return null;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Listamos los productos de un pedido del cliente.
+        public List<DetallePedido> listarDetallesPorCliente(
+            int idPedido, int idCliente)
+        {
+            List<DetallePedido> detalles = new List<DetallePedido>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "SELECT D.IdProducto, PR.Nombre, D.Cantidad, " +
+                    "D.PrecioUnitario " +
+                    "FROM DETALLE_PEDIDO D " +
+                    "INNER JOIN PEDIDOS P ON P.Id = D.IdPedido " +
+                    "INNER JOIN PRODUCTOS PR ON PR.Id = D.IdProducto " +
+                    "WHERE D.IdPedido = @IdPedido " +
+                    "AND P.IdCliente = @IdCliente " +
+                    "ORDER BY PR.Nombre, PR.Id");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.setearParametro("@IdCliente", idCliente);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    DetallePedido detalle = new DetallePedido();
+
+                    detalle.Producto = new Producto();
+                    detalle.Producto.Id = (int)datos.Lector["IdProducto"];
+                    detalle.Producto.Nombre = (string)datos.Lector["Nombre"];
+
+                    detalle.Cantidad = (int)datos.Lector["Cantidad"];
+                    detalle.PrecioUnitario =
+                        (decimal)datos.Lector["PrecioUnitario"];
+
+                    detalles.Add(detalle);
+                }
+
+                return detalles;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

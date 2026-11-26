@@ -490,7 +490,8 @@ namespace TPIWebForm_equipo_K
             {
                 System.Diagnostics.Trace.TraceError(ex.ToString());
 
-                lblAvisoCompra.Text = Server.HtmlEncode(ex.Message);
+                lblAvisoCompra.Text =
+                    "No pudimos guardar el pedido. Intentá nuevamente.";
                 lblAvisoCompra.Visible = true;
                 return;
             }
@@ -511,10 +512,10 @@ namespace TPIWebForm_equipo_K
             btnContinuar.Visible = false;
             btnConfirmarCompra.Visible = false;
 
-            lblAvisoCompra.CssClass = "d-block text-success mt-3";
-            lblAvisoCompra.Text =
-                "Pedido #" + idPedido + " registrado. Estado: Pendiente de pago.";
-            lblAvisoCompra.Visible = true;
+            // Mostramos la confirmación del pedido registrado.
+            lblNumeroPedido.Text = "Número de pedido: #" + idPedido;
+            pnlCompraRegistrada.Visible = true;
+            lblAvisoCompra.Visible = false;
         }
 
 

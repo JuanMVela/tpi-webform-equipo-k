@@ -18,6 +18,7 @@ namespace dominio
         public Direccion Direccion { get; set; }
         public int IdEstado { get; set; }
 
+        public string NombreEstado { get; set; }
         public List<DetallePedido> Detalles { get; set; }
 
         public Pedido()
