@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace negocio
 {
@@ -66,11 +67,11 @@ namespace negocio
                 datos.setearParametro("@Id", categoria.Id);
                 datos.ejecutarAccion();
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 throw ex;
             }
-            finally 
+            finally
             {
                 datos.cerrarConexion();
             }

@@ -146,5 +146,12 @@ namespace negocio
                 lector = null;
             }
         }
+
+        // Agregamos un parámetro indicando su tipo y tamaño.
+        public void setearParametro(
+            string nombre, SqlDbType tipo, int tamanio, object valor)
+        {
+            comando.Parameters.Add(nombre, tipo, tamanio).Value = valor;
+        }
     }
 }
