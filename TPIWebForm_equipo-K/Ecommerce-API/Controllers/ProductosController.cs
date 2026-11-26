@@ -16,8 +16,14 @@ namespace Ecommerce_API.Controllers
         public IEnumerable<Producto> Get()
         {
             ProductoNegocio negocio = new ProductoNegocio();
-            // Traigo solo los activos
-            return negocio.listarActivo();
+            List<Producto> productos = negocio.listarActivo();
+
+            foreach (var prod in productos)
+            {
+                prod.Imagenes = negocio.listarImagenes(prod.Id);
+            }
+
+            return productos;
         }
 
         // GET: api/Productos/5

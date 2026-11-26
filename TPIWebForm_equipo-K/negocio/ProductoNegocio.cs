@@ -79,6 +79,7 @@ namespace negocio
                     Imagen aux = new Imagen();
                     aux.Id = (int)datos.Lector["Id"];
                     aux.ImagenUrl = (string)datos.Lector["ImagenUrl"];
+                    aux.IdProducto = (int)datos.Lector["IdProducto"];
                     lista.Add(aux);
                 }
                 return lista;
