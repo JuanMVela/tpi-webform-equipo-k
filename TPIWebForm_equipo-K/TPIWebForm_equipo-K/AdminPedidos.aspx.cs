@@ -250,7 +250,8 @@ namespace TPIWebForm_equipo_K
                 return;
             }
 
-            if (e.CommandName != "AvanzarEstado")
+            if (e.CommandName != "AvanzarEstado" &&
+    e.CommandName != "CancelarPedido")
             {
                 return;
             }
@@ -276,8 +277,15 @@ namespace TPIWebForm_equipo_K
 
                 PedidoNegocio negocio = new PedidoNegocio();
 
-                negocio.avanzarEstado(
-                    idPedido, estadoActual, usuario.Id);
+                if (e.CommandName == "CancelarPedido")
+                {
+                    negocio.cancelarPedido(idPedido, usuario.Id);
+                }
+                else
+                {
+                    negocio.avanzarEstado(
+                        idPedido, estadoActual, usuario.Id);
+                }
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
@@ -298,9 +306,18 @@ namespace TPIWebForm_equipo_K
             }
 
             CargarPedidos(usuario.Id);
+            CargarComprobantes(usuario.Id);
 
             lblAvisoPedidos.CssClass = "d-block text-success mb-3";
-            lblAvisoPedidos.Text = "Estado del pedido actualizado.";
+            if (e.CommandName == "CancelarPedido")
+            {
+                lblAvisoPedidos.Text =
+                    "Pedido cancelado. Los productos fueron devueltos al stock.";
+            }
+            else
+            {
+                lblAvisoPedidos.Text = "Estado del pedido actualizado.";
+            }
             lblAvisoPedidos.Visible = true;
         }
 

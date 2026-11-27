@@ -700,5 +700,74 @@ namespace negocio
 
             return pedido;
         }
+
+        // Cancelamos el pedido y devolvemos su stock una sola vez.
+        public void cancelarPedido(int idPedido, int idAdministrador)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para cancelar pedidos.");
+            }
+
+            if (idPedido <= 0)
+            {
+                throw new Exception("El pedido no es válido.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+            bool transaccionIniciada = false;
+
+            try
+            {
+                datos.iniciarTransaccion();
+                transaccionIniciada = true;
+
+                // Solo cancelamos pedidos que todavía pueden cancelarse.
+                datos.setearConsulta(
+                    "UPDATE PEDIDOS SET IdEstado = 6 " +
+                    "WHERE Id = @IdPedido AND IdEstado IN (1, 2, 3)");
+
+                datos.setearParametro("@IdPedido", idPedido);
+
+                int filasAfectadas = datos.ejecutarAccion();
+
+                if (filasAfectadas != 1)
+                {
+                    throw new Exception(
+                        "El pedido ya está cancelado o su estado no permite cancelarlo.");
+                }
+
+                datos.limpiarParametros();
+
+                // Reponemos las cantidades descontadas al confirmar la compra.
+                datos.setearConsulta(
+                    "UPDATE PR SET Stock = PR.Stock + D.Cantidad " +
+                    "FROM PRODUCTOS PR " +
+                    "INNER JOIN DETALLE_PEDIDO D ON D.IdProducto = PR.Id " +
+                    "WHERE D.IdPedido = @IdPedido");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.ejecutarAccion();
+
+                datos.confirmarTransaccion();
+                transaccionIniciada = false;
+            }
+            catch
+            {
+                if (transaccionIniciada)
+                {
+                    datos.cancelarTransaccion();
+                }
+
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

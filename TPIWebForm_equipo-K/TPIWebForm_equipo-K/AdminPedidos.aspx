@@ -180,6 +180,14 @@
                                 Text='<%# TextoSiguienteEstado(
     (int)Eval("IdEstado"),
     (bool)Eval("FormaEntrega.RequiereDireccion")) %>' />
+                            <asp:Button ID="btnCancelarPedido" runat="server"
+                                Text="Cancelar pedido"
+                                CssClass="btn btn-outline-danger btn-sm mt-2"
+                                CommandName="CancelarPedido"
+                                CausesValidation="false"
+                                Visible='<%# (int)Eval("IdEstado") >= 1
+        && (int)Eval("IdEstado") <= 3 %>'
+                                OnClientClick="return confirm('¿Cancelar este pedido y devolver los productos al stock?');" />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Observaciones internas">
