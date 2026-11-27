@@ -20,7 +20,7 @@
                     <div class="card-body">
                         <h2 class="h5">
                             <%#: Eval("Calle") %> <%#: Eval("Numero") %>
-                    </h2>
+                        </h2>
                         <p class="mb-1">
                             <%#: Eval("Localidad") %> ·
                         CP <%#: Eval("CodigoPostal") %>
@@ -28,6 +28,10 @@
                         <p class="text-muted mb-0">
                             <%#: Eval("Observaciones") %>
                         </p>
+                        <asp:HyperLink ID="lnkEditar" runat="server"
+                            Text="Editar"
+                            CssClass="btn btn-outline-primary btn-sm mt-2"
+                            NavigateUrl='<%# "~/MisDirecciones.aspx?editar=" + Eval("Id") %>' />
                     </div>
                 </div>
             </ItemTemplate>
@@ -43,7 +47,10 @@
         <asp:Panel ID="pnlFormulario" runat="server"
             CssClass="card shadow-sm mt-3" Visible="false">
             <div class="card-body">
-                <h2 class="h5 mb-3">Nueva dirección</h2>
+                <h2 class="h5 mb-3">
+                    <asp:Literal ID="litTituloFormulario" runat="server"
+                        Text="Nueva dirección" />
+                </h2>
 
                 <div class="row g-3">
                     <div class="col-md-8">

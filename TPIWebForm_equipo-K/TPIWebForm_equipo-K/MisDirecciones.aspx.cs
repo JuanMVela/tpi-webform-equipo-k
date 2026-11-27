@@ -23,6 +23,11 @@ namespace TPIWebForm_equipo_K
             if (!IsPostBack)
             {
                 CargarDirecciones(usuario.Id);
+                if (Request.QueryString["editar"] != null)
+                {
+                    CargarDireccionParaEditar(usuario.Id);
+                    return;
+                }
 
                 if (Request.QueryString["origen"] == "compra")
                 {
@@ -90,13 +95,21 @@ namespace TPIWebForm_equipo_K
                 direccion.Localidad = txtLocalidad.Text.Trim();
                 direccion.CodigoPostal = txtCodigoPostal.Text.Trim();
                 direccion.Observaciones = txtObservaciones.Text.Trim();
-
                 DireccionNegocio negocio = new DireccionNegocio();
-                negocio.agregar(direccion);
+
+                if (Request.QueryString["editar"] != null)
+                {
+                    direccion.Id = int.Parse(Request.QueryString["editar"]);
+                    negocio.modificar(direccion);
+                }
+                else
+                {
+                    negocio.agregar(direccion);
+                }
             }
             catch (ArgumentException ex)
             {
-                lblAviso.Text = ex.Message;
+                lblAviso.Text = Server.HtmlEncode(ex.Message);
                 lblAviso.Visible = true;
                 return;
             }
@@ -115,6 +128,58 @@ namespace TPIWebForm_equipo_K
             }
 
             Response.Redirect("MisDirecciones.aspx");
+        }
+        // Cargamos una dirección del usuario en el formulario.
+        private void CargarDireccionParaEditar(int idUsuario)
+        {
+            try
+            {
+                int idDireccion = int.Parse(Request.QueryString["editar"]);
+
+                DireccionNegocio negocio = new DireccionNegocio();
+
+                // Buscamos únicamente entre las direcciones del usuario.
+                Direccion direccion = negocio.listarPorUsuario(idUsuario)
+                    .FirstOrDefault(d => d.Id == idDireccion);
+
+                if (direccion == null)
+                {
+                    lblAviso.Text = "No encontramos esa dirección.";
+                    lblAviso.Visible = true;
+                    return;
+                }
+
+                txtCalle.Text = direccion.Calle;
+                txtNumero.Text = direccion.Numero;
+                txtLocalidad.Text = direccion.Localidad;
+                txtCodigoPostal.Text = direccion.CodigoPostal;
+                txtObservaciones.Text = direccion.Observaciones;
+
+                repDirecciones.Visible = false;
+                lblSinDirecciones.Visible = false;
+
+                pnlFormulario.Visible = true;
+                btnNuevaDireccion.Visible = false;
+                btnGuardarDireccion.Text = "Guardar cambios";
+                litTituloFormulario.Text = "Editar dirección";
+            }
+            catch (FormatException)
+            {
+                lblAviso.Text = "El identificador de la dirección no es válido.";
+                lblAviso.Visible = true;
+            }
+            catch (OverflowException)
+            {
+                lblAviso.Text = "El identificador de la dirección no es válido.";
+                lblAviso.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(ex.ToString());
+
+                lblAviso.Text = "No pudimos cargar la dirección.";
+                lblAviso.Visible = true;
+            }
         }
     }
 }

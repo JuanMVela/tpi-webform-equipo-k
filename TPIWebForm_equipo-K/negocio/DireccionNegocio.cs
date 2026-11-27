@@ -96,5 +96,90 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        // Guardamos los cambios sin alterar las direcciones de pedidos anteriores.
+        public void modificar(Direccion direccion)
+        {
+            if (direccion.Id <= 0 || direccion.IdUsuario <= 0)
+            {
+                throw new ArgumentException("La dirección no es válida.");
+            }
+
+            if (string.IsNullOrWhiteSpace(direccion.Calle) ||
+                string.IsNullOrWhiteSpace(direccion.Numero) ||
+                string.IsNullOrWhiteSpace(direccion.Localidad) ||
+                string.IsNullOrWhiteSpace(direccion.CodigoPostal))
+            {
+                throw new ArgumentException("Completá los campos obligatorios.");
+            }
+
+            if (direccion.Calle.Length > 150 ||
+                direccion.Numero.Length > 20 ||
+                direccion.Localidad.Length > 100 ||
+                direccion.CodigoPostal.Length > 20 ||
+                (direccion.Observaciones ?? "").Length > 300)
+            {
+                throw new ArgumentException(
+                    "Revisá la longitud de los datos ingresados.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+            bool transaccionIniciada = false;
+
+            try
+            {
+                datos.iniciarTransaccion();
+                transaccionIniciada = true;
+
+                // Solo podemos editar una dirección activa del usuario.
+                datos.setearConsulta(
+                    "UPDATE DIRECCIONES SET Activo = 0 " +
+                    "WHERE Id = @Id AND IdUsuario = @IdUsuario AND Activo = 1");
+
+                datos.setearParametro("@Id", direccion.Id);
+                datos.setearParametro("@IdUsuario", direccion.IdUsuario);
+
+                int filas = datos.ejecutarAccion();
+
+                if (filas != 1)
+                {
+                    throw new ArgumentException(
+                        "La dirección ya no está disponible para editar.");
+                }
+
+                // La versión anterior queda asociada a sus pedidos.
+                datos.setearConsulta(
+                    "INSERT INTO DIRECCIONES " +
+                    "(IdUsuario, Calle, Numero, Localidad, " +
+                    "CodigoPostal, Observaciones, Activo) " +
+                    "VALUES (@IdUsuario, @Calle, @Numero, @Localidad, " +
+                    "@CodigoPostal, @Observaciones, 1)");
+
+                datos.setearParametro("@Calle", direccion.Calle);
+                datos.setearParametro("@Numero", direccion.Numero);
+                datos.setearParametro("@Localidad", direccion.Localidad);
+                datos.setearParametro("@CodigoPostal", direccion.CodigoPostal);
+                datos.setearParametro("@Observaciones",
+                    direccion.Observaciones ?? "");
+
+                datos.ejecutarAccion();
+
+                datos.confirmarTransaccion();
+                transaccionIniciada = false;
+            }
+            catch
+            {
+                if (transaccionIniciada)
+                {
+                    datos.cancelarTransaccion();
+                }
+
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
