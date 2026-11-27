@@ -106,12 +106,12 @@ namespace negocio
             datos.limpiarParametros();
 
             datos.setearConsulta(
-                "INSERT INTO PEDIDOS " +
-                "(IdCliente, Fecha, Total, IdFormaPago, " +
-                "IdFormaEntrega, IdDireccion, IdEstado) " +
-                "OUTPUT INSERTED.Id " +
-                "VALUES (@IdCliente, GETDATE(), @Total, @IdFormaPago, " +
-                "@IdFormaEntrega, @IdDireccion, 1)");
+                    "INSERT INTO PEDIDOS " +
+                    "(IdCliente, FechaCreacion, Total, IdFormaPago, " +
+                    "IdFormaEntrega, IdDireccion, IdEstado) " +
+                    "OUTPUT INSERTED.Id " +
+                    "VALUES (@IdCliente, GETDATE(), @Total, @IdFormaPago, " +
+                    "@IdFormaEntrega, @IdDireccion, 1)");
 
             datos.setearParametro("@IdCliente", pedido.Cliente.Id);
             datos.setearParametro("@Total", pedido.Total);
@@ -131,8 +131,7 @@ namespace negocio
         }
 
         // Descontamos stock y guardamos un producto del pedido.
-        private void guardarDetalle(
-            int idPedido, DetallePedido detalle, AccesoDatos datos)
+        private void guardarDetalle(int idPedido, DetallePedido detalle, AccesoDatos datos)
         {
             datos.limpiarParametros();
 
@@ -278,7 +277,6 @@ namespace negocio
             }
         }
 
-        // Listamos únicamente los pedidos del cliente indicado.
         public List<Pedido> listarPorCliente(int idCliente)
         {
             List<Pedido> pedidos = new List<Pedido>();
@@ -287,12 +285,12 @@ namespace negocio
             try
             {
                 datos.setearConsulta(
-                    "SELECT P.Id, P.Fecha, P.Total, P.IdEstado, " +
+                    "SELECT P.Id, P.FechaCreacion, P.Total, P.IdEstado, " +
                     "E.Nombre AS NombreEstado " +
                     "FROM PEDIDOS P " +
                     "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
                     "WHERE P.IdCliente = @IdCliente " +
-                    "ORDER BY P.Fecha DESC, P.Id DESC");
+                    "ORDER BY P.FechaCreacion DESC, P.Id DESC");
 
                 datos.setearParametro("@IdCliente", idCliente);
                 datos.ejecutarLectura();
@@ -302,7 +300,7 @@ namespace negocio
                     Pedido pedido = new Pedido();
 
                     pedido.Id = (int)datos.Lector["Id"];
-                    pedido.FechaCreacion = (DateTime)datos.Lector["Fecha"];
+                    pedido.FechaCreacion = (DateTime)datos.Lector["FechaCreacion"]; // Cambiado acá
                     pedido.Total = (decimal)datos.Lector["Total"];
                     pedido.IdEstado = (int)datos.Lector["IdEstado"];
                     pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
@@ -326,7 +324,7 @@ namespace negocio
             try
             {
                 datos.setearConsulta(
-                    "SELECT P.Id, P.Fecha, P.Total, P.IdEstado, " +
+                    "SELECT P.Id, P.FechaCreacion, P.Total, P.IdEstado, " +
                     "E.Nombre AS NombreEstado " +
                     "FROM PEDIDOS P " +
                     "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
@@ -342,7 +340,7 @@ namespace negocio
                     Pedido pedido = new Pedido();
 
                     pedido.Id = (int)datos.Lector["Id"];
-                    pedido.FechaCreacion = (DateTime)datos.Lector["Fecha"];
+                    pedido.FechaCreacion = (DateTime)datos.Lector["FechaCreacion"]; // Cambiado acá
                     pedido.Total = (decimal)datos.Lector["Total"];
                     pedido.IdEstado = (int)datos.Lector["IdEstado"];
                     pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
@@ -402,6 +400,33 @@ namespace negocio
             finally
             {
                 datos.cerrarConexion();
+            }
+        }
+        // Avanzamos el estado del pedido para la logística
+        public void avanzarEstado(int idPedido, int idEstadoActual)
+        {
+            // Solo avanzamos si el pedido ya está pagado (2) y no está entregado (5)
+            if (idEstadoActual >= 2 && idEstadoActual < 5)
+            {
+                int nuevoEstado = idEstadoActual + 1;
+
+                AccesoDatos datos = new AccesoDatos();
+                try
+                {
+                    datos.setearConsulta("UPDATE PEDIDOS SET IdEstado = @NuevoEstado WHERE Id = @IdPedido AND IdEstado = @EstadoActual");
+                    datos.setearParametro("@NuevoEstado", nuevoEstado);
+                    datos.setearParametro("@IdPedido", idPedido);
+                    datos.setearParametro("@EstadoActual", idEstadoActual);
+                    datos.ejecutarAccion();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+                finally
+                {
+                    datos.cerrarConexion();
+                }
             }
         }
     }

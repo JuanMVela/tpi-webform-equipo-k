@@ -61,11 +61,12 @@
                                 CausesValidation="false" />
                         </ItemTemplate>
                     </asp:TemplateField>
+
                 </Columns>
             </asp:GridView>
         </div>
-
+        
         <a href="AdminDashboard.aspx" class="btn btn-outline-secondary">Volver al panel
-    </a>
+        </a>
     </div>
 </asp:Content>

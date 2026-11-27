@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace negocio
 {
-    internal class AccesoDatos
+    public class AccesoDatos
     {
 
         private SqlConnection conexion;
