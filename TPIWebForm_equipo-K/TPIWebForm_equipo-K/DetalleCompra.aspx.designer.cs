@@ -123,6 +123,42 @@ namespace TPIWebForm_equipo_K
         protected global::System.Web.UI.WebControls.Label lblTotal;
 
         /// <summary>
+        /// Control lblFormaPago.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFormaPago;
+
+        /// <summary>
+        /// Control lblFormaEntrega.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblFormaEntrega;
+
+        /// <summary>
+        /// Control pnlDireccionPedido.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlDireccionPedido;
+
+        /// <summary>
+        /// Control lblDireccionPedido.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDireccionPedido;
+
+        /// <summary>
         /// Control repProductos.
         /// </summary>
         /// <remarks>

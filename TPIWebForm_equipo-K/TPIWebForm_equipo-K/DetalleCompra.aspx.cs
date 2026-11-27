@@ -74,6 +74,27 @@ namespace TPIWebForm_equipo_K
                 lblFecha.Text = pedido.FechaCreacion.ToString("dd/MM/yyyy HH:mm");
                 lblEstado.Text = Server.HtmlEncode(pedido.NombreEstado);
                 lblTotal.Text = pedido.Total.ToString("C");
+                // Mostramos las opciones elegidas al comprar.
+                lblFormaPago.Text =
+                    Server.HtmlEncode(pedido.FormaPago.Nombre);
+
+                lblFormaEntrega.Text =
+                    Server.HtmlEncode(pedido.FormaEntrega.Nombre);
+
+                // Mostramos el domicilio cuando el pedido tiene dirección.
+                pnlDireccionPedido.Visible = false;
+
+                if (pedido.Direccion != null)
+                {
+                    string direccion =
+                        pedido.Direccion.Calle + " " +
+                        pedido.Direccion.Numero + " — " +
+                        pedido.Direccion.Localidad + " · CP " +
+                        pedido.Direccion.CodigoPostal;
+
+                    lblDireccionPedido.Text = Server.HtmlEncode(direccion);
+                    pnlDireccionPedido.Visible = true;
+                }
 
                 // Cargamos los productos y precios de esta compra.
                 var detalles = negocio.listarDetallesPorCliente(

@@ -130,6 +130,32 @@
                 </p>
                 <hr class="my-4" />
 
+                <h2 class="h5 mb-3">Pago y entrega</h2>
+
+                <p>
+                    Forma de pago:
+   
+                    <asp:Label ID="lblFormaPago" runat="server"
+                        CssClass="fw-bold" />
+                </p>
+
+                <p>
+                    Forma de entrega:
+   
+                    <asp:Label ID="lblFormaEntrega" runat="server"
+                        CssClass="fw-bold" />
+                </p>
+
+                <asp:Panel ID="pnlDireccionPedido" runat="server"
+                    Visible="false">
+                    <p class="mb-0">
+                        Dirección:
+       
+                        <asp:Label ID="lblDireccionPedido" runat="server" />
+                    </p>
+                </asp:Panel>
+                <hr class="my-4" />
+
                 <h2 class="h5 mb-3">Productos comprados</h2>
 
                 <asp:Repeater ID="repProductos" runat="server">
@@ -144,11 +170,11 @@
                                     <%#: Eval("Cantidad") %> ×
        
                         <%#: Eval("PrecioUnitario", "{0:C}") %>
-    </span>
+                                </span>
 
                                 <strong>
                                     <%#: Eval("Subtotal", "{0:C}") %>
-    </strong>
+                                </strong>
                             </div>
                         </div>
                     </ItemTemplate>
@@ -201,6 +227,6 @@
         </asp:Panel>
 
         <a href="MisCompras.aspx" class="btn btn-outline-secondary">Volver a mis compras
-    </a>
+        </a>
     </div>
 </asp:Content>
