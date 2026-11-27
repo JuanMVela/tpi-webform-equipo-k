@@ -467,9 +467,10 @@ namespace negocio
                 string consulta =
     "SELECT P.Id, P.IdCliente, P.Fecha, P.Total, " +
     "P.IdEstado, E.Nombre AS NombreEstado, " +
-    "P.ObservacionesInternas " +
+    "P.ObservacionesInternas, FE.RequiereDireccion " +
     "FROM PEDIDOS P " +
     "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
+    "INNER JOIN FORMAS_ENTREGA FE ON FE.Id = P.IdFormaEntrega " +
     "WHERE 1 = 1 ";
 
                 if (idEstado != 0)
@@ -517,6 +518,17 @@ namespace negocio
 
                     pedido.Cliente = new Usuario();
                     pedido.Cliente.Id = (int)datos.Lector["IdCliente"];
+
+                    pedido.FormaEntrega = new FormaEntrega();
+
+                    pedido.FormaEntrega.RequiereDireccion =
+                        (bool)datos.Lector["RequiereDireccion"];
+
+                    if (pedido.IdEstado == 4 &&
+                        !pedido.FormaEntrega.RequiereDireccion)
+                    {
+                        pedido.NombreEstado = "Listo para retirar";
+                    }
 
                     pedidos.Add(pedido);
                 }

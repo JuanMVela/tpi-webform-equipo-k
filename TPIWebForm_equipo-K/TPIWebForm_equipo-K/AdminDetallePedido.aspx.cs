@@ -76,6 +76,11 @@ namespace TPIWebForm_equipo_K
                 lblFecha.Text =
                     pedido.FechaCreacion.ToString("dd/MM/yyyy HH:mm");
                 lblEstado.Text = Server.HtmlEncode(pedido.NombreEstado);
+                if (pedido.IdEstado == 4 &&
+    !pedido.FormaEntrega.RequiereDireccion)
+                {
+                    lblEstado.Text = "Listo para retirar";
+                }
                 lblPago.Text = Server.HtmlEncode(pedido.FormaPago.Nombre);
                 lblEntrega.Text =
                     Server.HtmlEncode(pedido.FormaEntrega.Nombre);

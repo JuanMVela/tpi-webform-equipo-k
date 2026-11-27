@@ -97,7 +97,8 @@
 
                         <li id="pasoEnviado" runat="server">
                             <span class="circulo">4</span>
-                            <span class="texto">Enviado</span>
+                            <asp:Label ID="lblEtapaDespacho" runat="server"
+                                CssClass="texto" Text="Enviado" />
                         </li>
 
                         <li id="pasoEntregado" runat="server">

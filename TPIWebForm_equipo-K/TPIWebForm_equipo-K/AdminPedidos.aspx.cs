@@ -214,7 +214,9 @@ namespace TPIWebForm_equipo_K
         }
 
         // Indicamos qué acción corresponde al estado actual.
-        protected string TextoSiguienteEstado(int idEstado)
+        // Adaptamos la acción según el estado y la entrega.
+        protected string TextoSiguienteEstado(
+            int idEstado, bool requiereDireccion)
         {
             switch (idEstado)
             {
@@ -222,7 +224,12 @@ namespace TPIWebForm_equipo_K
                     return "Pasar a preparación";
 
                 case 3:
-                    return "Marcar enviado";
+                    if (requiereDireccion)
+                    {
+                        return "Marcar enviado";
+                    }
+
+                    return "Listo para retirar";
 
                 case 4:
                     return "Marcar entregado";

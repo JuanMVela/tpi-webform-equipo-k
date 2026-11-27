@@ -79,7 +79,8 @@
                     <asp:ListItem Text="Pendiente" Value="1" />
                     <asp:ListItem Text="Pagado" Value="2" />
                     <asp:ListItem Text="En preparación" Value="3" />
-                    <asp:ListItem Text="Enviado" Value="4" />
+                    <asp:ListItem
+                        Text="Enviado / Listo para retirar" Value="4" />
                     <asp:ListItem Text="Entregado" Value="5" />
                     <asp:ListItem Text="Cancelado" Value="6" />
                 </asp:DropDownList>
@@ -176,7 +177,9 @@
                                 CausesValidation="false"
                                 Visible='<%# (int)Eval("IdEstado") >= 2
                 && (int)Eval("IdEstado") <= 4 %>'
-                                Text='<%# TextoSiguienteEstado((int)Eval("IdEstado")) %>' />
+                                Text='<%# TextoSiguienteEstado(
+    (int)Eval("IdEstado"),
+    (bool)Eval("FormaEntrega.RequiereDireccion")) %>' />
                         </ItemTemplate>
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Observaciones internas">

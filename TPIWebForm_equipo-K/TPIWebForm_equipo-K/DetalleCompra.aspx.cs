@@ -106,6 +106,18 @@ namespace TPIWebForm_equipo_K
                 // Permitimos preparar la carga mientras el pedido esté pendiente.
                 CargarEstadoComprobante(pedido, usuario.Id);
 
+                // Adaptamos el seguimiento según la forma de entrega.
+                lblEtapaDespacho.Text = "Enviado";
+
+                if (!pedido.FormaEntrega.RequiereDireccion)
+                {
+                    lblEtapaDespacho.Text = "Listo para retirar";
+
+                    if (pedido.IdEstado == 4)
+                    {
+                        lblEstado.Text = "Listo para retirar";
+                    }
+                }
                 MostrarSeguimiento(pedido.IdEstado);
                 pnlPedido.Visible = true;
 
