@@ -19,6 +19,7 @@ namespace dominio
         public int IdEstado { get; set; }
 
         public string NombreEstado { get; set; }
+        public string ObservacionesInternas { get; set; }
         public List<DetallePedido> Detalles { get; set; }
 
         public Pedido()

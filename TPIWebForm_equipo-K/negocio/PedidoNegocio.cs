@@ -317,6 +317,7 @@ namespace negocio
         }
 
         // Buscamos un pedido que pertenezca al cliente.
+        // Buscamos el pedido del cliente con sus datos de pago y entrega.
         public Pedido obtenerPorCliente(int idPedido, int idCliente)
         {
             AccesoDatos datos = new AccesoDatos();
@@ -324,10 +325,18 @@ namespace negocio
             try
             {
                 datos.setearConsulta(
-                    "SELECT P.Id, P.FechaCreacion, P.Total, P.IdEstado, " +
-                    "E.Nombre AS NombreEstado " +
+                    "SELECT P.Id, P.Fecha, P.Total, P.IdEstado, " +
+                    "E.Nombre AS NombreEstado, " +
+                    "P.IdFormaPago, FP.Nombre AS NombrePago, " +
+                    "P.IdFormaEntrega, FE.Nombre AS NombreEntrega, " +
+                    "FE.RequiereDireccion, " +
+                    "D.Id AS IdDireccion, D.Calle, D.Numero, " +
+                    "D.Localidad, D.CodigoPostal " +
                     "FROM PEDIDOS P " +
                     "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
+                    "INNER JOIN FORMAS_PAGO FP ON FP.Id = P.IdFormaPago " +
+                    "INNER JOIN FORMAS_ENTREGA FE ON FE.Id = P.IdFormaEntrega " +
+                    "LEFT JOIN DIRECCIONES D ON D.Id = P.IdDireccion " +
                     "WHERE P.Id = @IdPedido AND P.IdCliente = @IdCliente");
 
                 datos.setearParametro("@IdPedido", idPedido);
@@ -344,6 +353,35 @@ namespace negocio
                     pedido.Total = (decimal)datos.Lector["Total"];
                     pedido.IdEstado = (int)datos.Lector["IdEstado"];
                     pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
+
+                    pedido.FormaPago = new FormaPago();
+                    pedido.FormaPago.Id = (int)datos.Lector["IdFormaPago"];
+                    pedido.FormaPago.Nombre =
+                        (string)datos.Lector["NombrePago"];
+
+                    pedido.FormaEntrega = new FormaEntrega();
+                    pedido.FormaEntrega.Id = (int)datos.Lector["IdFormaEntrega"];
+                    pedido.FormaEntrega.Nombre =
+                        (string)datos.Lector["NombreEntrega"];
+                    pedido.FormaEntrega.RequiereDireccion =
+                        (bool)datos.Lector["RequiereDireccion"];
+
+                    // Los pedidos con retiro pueden no tener dirección.
+                    if (datos.Lector["IdDireccion"] != DBNull.Value)
+                    {
+                        pedido.Direccion = new Direccion();
+
+                        pedido.Direccion.Id =
+                            (int)datos.Lector["IdDireccion"];
+                        pedido.Direccion.Calle =
+                            Convert.ToString(datos.Lector["Calle"]);
+                        pedido.Direccion.Numero =
+                            Convert.ToString(datos.Lector["Numero"]);
+                        pedido.Direccion.Localidad =
+                            Convert.ToString(datos.Lector["Localidad"]);
+                        pedido.Direccion.CodigoPostal =
+                            Convert.ToString(datos.Lector["CodigoPostal"]);
+                    }
 
                     return pedido;
                 }
@@ -402,31 +440,331 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
-        // Avanzamos el estado del pedido para la logística
-        public void avanzarEstado(int idPedido, int idEstadoActual)
-        {
-            // Solo avanzamos si el pedido ya está pagado (2) y no está entregado (5)
-            if (idEstadoActual >= 2 && idEstadoActual < 5)
-            {
-                int nuevoEstado = idEstadoActual + 1;
 
-                AccesoDatos datos = new AccesoDatos();
-                try
+        // Listamos los pedidos para un administrador activo.
+        public List<Pedido> listarAdministrador(
+    int idAdministrador,
+    int idEstado = 0,
+    int idCliente = 0,
+    DateTime? desde = null,
+    DateTime? hasta = null)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para consultar los pedidos.");
+            }
+
+            List<Pedido> pedidos = new List<Pedido>();
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                string consulta =
+    "SELECT P.Id, P.IdCliente, P.Fecha, P.Total, " +
+    "P.IdEstado, E.Nombre AS NombreEstado, " +
+    "P.ObservacionesInternas, FE.RequiereDireccion " +
+    "FROM PEDIDOS P " +
+    "INNER JOIN ESTADOS_PEDIDO E ON E.Id = P.IdEstado " +
+    "INNER JOIN FORMAS_ENTREGA FE ON FE.Id = P.IdFormaEntrega " +
+    "WHERE 1 = 1 ";
+
+                if (idEstado != 0)
                 {
-                    datos.setearConsulta("UPDATE PEDIDOS SET IdEstado = @NuevoEstado WHERE Id = @IdPedido AND IdEstado = @EstadoActual");
-                    datos.setearParametro("@NuevoEstado", nuevoEstado);
-                    datos.setearParametro("@IdPedido", idPedido);
-                    datos.setearParametro("@EstadoActual", idEstadoActual);
-                    datos.ejecutarAccion();
+                    consulta += "AND P.IdEstado = @IdEstado ";
+                    datos.setearParametro("@IdEstado", idEstado);
                 }
-                catch (Exception ex)
+
+                if (idCliente != 0)
                 {
-                    throw ex;
+                    consulta += "AND P.IdCliente = @IdCliente ";
+                    datos.setearParametro("@IdCliente", idCliente);
                 }
-                finally
+
+                if (desde.HasValue)
                 {
-                    datos.cerrarConexion();
+                    consulta += "AND P.Fecha >= @Desde ";
+                    datos.setearParametro("@Desde", desde.Value.Date);
                 }
+
+                if (hasta.HasValue)
+                {
+                    consulta += "AND P.Fecha < @HastaExclusivo ";
+                    datos.setearParametro(
+                        "@HastaExclusivo", hasta.Value.Date.AddDays(1));
+                }
+
+                consulta += "ORDER BY P.Fecha DESC, P.Id DESC";
+
+                datos.setearConsulta(consulta);
+
+                datos.ejecutarLectura();
+
+                while (datos.Lector.Read())
+                {
+                    Pedido pedido = new Pedido();
+
+                    pedido.Id = (int)datos.Lector["Id"];
+                    pedido.FechaCreacion = (DateTime)datos.Lector["Fecha"];
+                    pedido.Total = (decimal)datos.Lector["Total"];
+                    pedido.IdEstado = (int)datos.Lector["IdEstado"];
+                    pedido.NombreEstado = (string)datos.Lector["NombreEstado"];
+                    pedido.ObservacionesInternas =
+    Convert.ToString(datos.Lector["ObservacionesInternas"]);
+
+                    pedido.Cliente = new Usuario();
+                    pedido.Cliente.Id = (int)datos.Lector["IdCliente"];
+
+                    pedido.FormaEntrega = new FormaEntrega();
+
+                    pedido.FormaEntrega.RequiereDireccion =
+                        (bool)datos.Lector["RequiereDireccion"];
+
+                    if (pedido.IdEstado == 4 &&
+                        !pedido.FormaEntrega.RequiereDireccion)
+                    {
+                        pedido.NombreEstado = "Listo para retirar";
+                    }
+
+                    pedidos.Add(pedido);
+                }
+
+                return pedidos;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Avanzamos un pedido a la siguiente etapa.
+        public void avanzarEstado(
+            int idPedido, int estadoActual, int idAdministrador)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para modificar los pedidos.");
+            }
+
+            if (idPedido <= 0)
+            {
+                throw new Exception("El pedido no es válido.");
+            }
+
+            // Solo avanzamos desde Pagado, En preparación o Enviado.
+            if (estadoActual < 2 || estadoActual > 4)
+            {
+                throw new Exception(
+                    "El pedido no puede avanzar desde ese estado.");
+            }
+
+            int nuevoEstado = estadoActual + 1;
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE PEDIDOS SET IdEstado = @NuevoEstado " +
+                    "WHERE Id = @IdPedido AND IdEstado = @EstadoActual");
+
+                datos.setearParametro("@NuevoEstado", nuevoEstado);
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.setearParametro("@EstadoActual", estadoActual);
+
+                int filasAfectadas = datos.ejecutarAccion();
+
+                if (filasAfectadas != 1)
+                {
+                    throw new Exception(
+                        "El pedido cambió de estado o ya no está disponible. " +
+                        "Actualizá la página.");
+                }
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Guardamos la observación interna de un pedido.
+        public void guardarObservaciones(
+            int idPedido, string observaciones, int idAdministrador)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para modificar los pedidos.");
+            }
+
+            if (idPedido <= 0)
+            {
+                throw new Exception("El pedido no es válido.");
+            }
+
+            // Si no recibimos texto, usamos una cadena vacía.
+            if (observaciones == null)
+            {
+                observaciones = "";
+            }
+
+            observaciones = observaciones.Trim();
+
+            if (observaciones.Length > 1000)
+            {
+                throw new Exception(
+                    "La observación no puede superar los 1000 caracteres.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(
+                    "UPDATE PEDIDOS " +
+                    "SET ObservacionesInternas = @Observaciones " +
+                    "WHERE Id = @IdPedido");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.setearParametro("@Observaciones", observaciones);
+
+                int filasAfectadas = datos.ejecutarAccion();
+
+                if (filasAfectadas != 1)
+                {
+                    throw new Exception(
+                        "El pedido no está disponible.");
+                }
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        // Consultamos un pedido desde administración.
+        public Pedido obtenerAdministrador(
+            int idPedido, int idAdministrador)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para consultar los pedidos.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+            int idCliente;
+            string observaciones;
+
+            try
+            {
+                datos.setearConsulta(
+    "SELECT IdCliente, ObservacionesInternas " +
+    "FROM PEDIDOS WHERE Id = @IdPedido");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.ejecutarLectura();
+
+                if (!datos.Lector.Read())
+                {
+                    return null;
+                }
+
+                idCliente = (int)datos.Lector["IdCliente"];
+                observaciones =
+    Convert.ToString(datos.Lector["ObservacionesInternas"]);
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+
+            Pedido pedido = obtenerPorCliente(idPedido, idCliente);
+
+            if (pedido != null)
+            {
+                pedido.Detalles =
+                    listarDetallesPorCliente(idPedido, idCliente);
+                pedido.ObservacionesInternas = observaciones;
+            }
+
+            return pedido;
+        }
+
+        // Cancelamos el pedido y devolvemos su stock una sola vez.
+        public void cancelarPedido(int idPedido, int idAdministrador)
+        {
+            UsuarioNegocio usuarios = new UsuarioNegocio();
+
+            if (!usuarios.esAdministradorActivo(idAdministrador))
+            {
+                throw new Exception(
+                    "No tenés permiso para cancelar pedidos.");
+            }
+
+            if (idPedido <= 0)
+            {
+                throw new Exception("El pedido no es válido.");
+            }
+
+            AccesoDatos datos = new AccesoDatos();
+            bool transaccionIniciada = false;
+
+            try
+            {
+                datos.iniciarTransaccion();
+                transaccionIniciada = true;
+
+                // Solo cancelamos pedidos que todavía pueden cancelarse.
+                datos.setearConsulta(
+                    "UPDATE PEDIDOS SET IdEstado = 6 " +
+                    "WHERE Id = @IdPedido AND IdEstado IN (1, 2, 3)");
+
+                datos.setearParametro("@IdPedido", idPedido);
+
+                int filasAfectadas = datos.ejecutarAccion();
+
+                if (filasAfectadas != 1)
+                {
+                    throw new Exception(
+                        "El pedido ya está cancelado o su estado no permite cancelarlo.");
+                }
+
+                datos.limpiarParametros();
+
+                // Reponemos las cantidades descontadas al confirmar la compra.
+                datos.setearConsulta(
+                    "UPDATE PR SET Stock = PR.Stock + D.Cantidad " +
+                    "FROM PRODUCTOS PR " +
+                    "INNER JOIN DETALLE_PEDIDO D ON D.IdProducto = PR.Id " +
+                    "WHERE D.IdPedido = @IdPedido");
+
+                datos.setearParametro("@IdPedido", idPedido);
+                datos.ejecutarAccion();
+
+                datos.confirmarTransaccion();
+                transaccionIniciada = false;
+            }
+            catch
+            {
+                if (transaccionIniciada)
+                {
+                    datos.cancelarTransaccion();
+                }
+
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
             }
         }
     }
