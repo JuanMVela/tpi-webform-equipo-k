@@ -1,6 +1,19 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Catalogo.aspx.cs" Inherits="TPIWebForm_equipo_K.Catalogo" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <style>
+        .galeria-producto {
+            position: relative;
+            height: 240px;
+        }
+
+            .galeria-producto img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                padding: 12px;
+            }
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container mt-4">
@@ -11,15 +24,35 @@
                 <ItemTemplate>
                     <div class="col">
                         <div class="card h-100 shadow-sm position-relative">
-                            <!-- Mostramos la imagen -->
-                            <img src='<%# Eval("Imagenes.Count") != null && (int)Eval("Imagenes.Count") > 0 ? Eval("Imagenes[0].ImagenUrl") : "https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=" %>' />
+                            <!-- Mostramos las imágenes del producto. -->
+                            <!-- Mostramos la primera imagen del producto. -->
+                            <div class="galeria-producto">
+                                <asp:Repeater ID="repImagenPrincipal" runat="server"
+                                    DataSource='<%# Eval("Imagenes") %>'>
+                                    <ItemTemplate>
+                                        <asp:PlaceHolder runat="server"
+                                            Visible='<%# Container.ItemIndex == 0 %>'>
+                                            <img src='<%#: Eval("ImagenUrl") %>'
+                                                alt="Imagen del producto" />
+                                        </asp:PlaceHolder>
+                                    </ItemTemplate>
+                                </asp:Repeater>
+
+                                <asp:PlaceHolder runat="server"
+                                    Visible='<%# (int)Eval("Imagenes.Count") == 0 %>'>
+                                    <div class="h-100 d-flex align-items-center justify-content-center text-muted">
+                                        Sin imagen
+       
+                                    </div>
+                                </asp:PlaceHolder>
+                            </div>
 
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title fw-bold">
                                     <a href='DetalleProducto.aspx?id=<%# Eval("Id") %>'
                                         class="stretched-link text-decoration-none text-reset">
                                         <%#: Eval("Nombre") %>
-    </a>
+                                    </a>
                                 </h5>
                                 <p class="text-muted mb-1">
                                     <%# Eval("Categoria.Nombre") %> | <%# Eval("Marca.Nombre") %>

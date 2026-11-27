@@ -46,14 +46,20 @@ namespace TPIWebForm_equipo_K
             txtCantidad.Enabled = hayStock;
             btnAgregarCarrito.Enabled = hayStock;
 
-            // Usamos la primera imagen, igual que en el catálogo.
+            // Cargamos la imagen principal y las miniaturas.
             var imagenes = negocio.listarImagenes(producto.Id);
+
             if (imagenes.Count > 0)
             {
                 imgProducto.ImageUrl = imagenes[0].ImagenUrl;
                 imgProducto.AlternateText = producto.Nombre;
                 imgProducto.Visible = true;
             }
+
+            repMiniaturas.DataSource = imagenes;
+            repMiniaturas.DataBind();
+
+            pnlGaleria.Visible = imagenes.Count > 1;
 
             pnlDetalle.Visible = true;
         }
